@@ -1,4 +1,3 @@
-<head>
     <meta name="keywords" content="jQuery Menu, Main Menu, Context Menu, Vertical Menu, Popup Menu, Menu, jqxMenu" /> 
     <meta name="description" content="The jqxMenu widget supports several built-in modes - horizontal, vertical and context menu. In this demo, the mode property is set to 'vertical'."/>
     <title id='Description'>The jqxMenu widget supports several built-in modes - horizontal, vertical and context menu. In this demo, the mode property is set to 'vertical'.
@@ -11,5 +10,3 @@
 	<script type="text/javascript" src="lib/jqwidgets/jqxchart.js"></script>
 	<script type="text/javascript" src="lib/jqwidgets/jqxmenu.js"></script>
 	<script type="text/javascript" src="lib/jqwidgets/jqxdockpanel.js"></script>
-	
-</head>
