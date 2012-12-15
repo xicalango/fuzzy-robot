@@ -1,0 +1,70 @@
+	<!--Static data import!-->
+	<script type="text/javascript" src="data/bundeslaender2009.js"></script>	
+	
+	<script type="text/javascript" style='width: 110px;'>
+		$(document).ready(function () {
+			var theme = getTheme();
+			
+			// prepare the data
+			var source =
+			{
+				datatype: "json",
+				datafields: [
+					{ name: 'id' },
+					{ name: 'parentid' },
+					{ name: 'text' },
+					{ name: 'subMenuWidth' }
+				],
+				id: 'id',
+				localdata: bundeslaender2009_data
+			};
+
+			// create data adapter.
+			var bundeslaenderDataAdapter = new $.jqx.dataAdapter(source);
+			// perform Data Binding.
+			bundeslaenderDataAdapter.dataBind();
+			// get the menu items. The first parameter is the item's id. The second parameter is the parent item's id. The 'items' parameter represents 
+			// the sub items collection name. Each jqxTree item has a 'label' property, but in the JSON data, we have a 'text' field. The last parameter 
+			// specifies the mapping between the 'text' and 'label' fields.  
+			var laenderForBundeslaender = bundeslaenderDataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{ name: 'text', map: 'label'}]);
+			$('#landesEbeneMenu').jqxMenu({ source: laenderForBundeslaender, mode: 'vertical', theme: theme, width: '170' });
+			
+			var laenderForWahlkreise = bundeslaenderDataAdapter.getRecordsHierarchy('id', 'parentid', 'items', [{ name: 'text', map: 'label'}]);
+			$('#wahlkreisEbeneMenu').jqxMenu({ source: laenderForWahlkreise, mode: 'vertical', theme: theme, width: '170' });
+			
+			
+			// Create a jqxMenu
+			$("#jqxMenu").jqxMenu({ width: '170', mode: 'vertical', theme: theme });
+			$("#jqxMenu").css('visibility', 'visible');
+		});
+    </script>
+	<div id='jqxMenu'>
+		<ul>
+			<li><a href="home.php">fuzzy-robot</a></li>
+			<li>Wahlergebnisse
+				<ul>
+					<li><a href="ergebnisse_bundesebene.php">Bundesebene</a></li>
+					<li>Landesebene
+						<ul id='landesEbeneMenu'></ul>
+					</li>
+					<li>Wahlkreisebene
+						<ul id='wahlkreisEbeneMenu'></ul>
+					</li>
+				</ul>
+			</li>
+			<li>Gewählte Personen
+				<ul>
+					<li><a href="#">Alphabetisch</a></li>
+					<li><a href="#">Nach Landeslisten</a></li>
+					<li><a href="#">In Wahlkreisen</a></li>
+					<li><a href="#">Nach Parteien</a></li>
+				</ul>
+			</li>
+			<li>Dateneingabe
+				<ul>
+					<li><a href="#">csv Import</a></li>
+					<li><a href="#">Eingabemaske</a></li>
+				</ul>
+			</li>
+		</ul>
+	</div>
