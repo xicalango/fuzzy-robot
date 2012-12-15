@@ -2,7 +2,7 @@
 
 $conn = pg_connect("host=link port=5432 dbname=btw2009 user=btw2009 password=btw2009") or die("Connection error...");
 
-$qresult = pg_query( $conn, "SELECT * FROM ergebnisse_zweitstimme_diagramm_name") or die("Query error...");
+$qresult = pg_query( $conn, "SELECT * FROM sitzverteilung_diagramm") or die("Query error...");
 
 
 $result = array();
