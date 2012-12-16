@@ -72,8 +72,6 @@
     </script>
 </head>
 <body class='default'>
-	<?php include("menu.html");?>
-	<?php include("menu_bundesebene.html");?>
     <div id='jqxChart' style="width:680px; height:400px; position: relative; left: 0px; top: 0px;">
     </div>
 </body>

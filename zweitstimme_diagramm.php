@@ -6,8 +6,7 @@
 	<script type="text/javascript">
         $(document).ready(function () {
             // prepare chart data
-            
-            
+                        
             var source =
 			{
 				 datatype: "json",
@@ -26,16 +25,8 @@
 				loadComplete: function () { },
 				loadError: function () { }
 			});
-            
-            
-            var sampleData = [
-            {"name":"CDU","prozent":27.3},
-            {"name":"SPD","prozent":23.0},
-            {"name":"FDP","prozent":14.6},
-            {"name":"DIE LINKE","prozent":11.9},
-            {"name":"GR\u00dcNE","prozent":10.7},
-            {"name":"CSU","prozent":6.5},
-            {"name":"Andere","prozent":6.0}];
+                        
+           
             // prepare jqxChart settings
             var settings = {
                 title: "Stimmenanteile Zweitstimme",
@@ -74,7 +65,6 @@
         });
     </script>
 </head>
-<?php include("menu.html");?>
 <body class='default'>
     <div id='jqxChart' style="width:680px; height:400px; position: relative; left: 0px; top: 0px;">
     </div>
