@@ -26,30 +26,18 @@ class DataAdapter
 		pg_close($this->dbConnection);
 	}
 
-	function query( $query, $params )
+	function query( $query, $params = array() )
 	{
-		if($params == null)
+		if( !$result = pg_query_params( $this->dbConnection, $query, $params ) )
 		{
-			if( !$result = pg_query( $this->dbConnection, $query ) )
-			{
-				die("Error during Query: " . pg_error());
-			}
-
-			return $result;
+			die("Error during Query: " . pg_error());
 		}
-		else
-		{
-			if( !$result = pg_query( $this->dbConnection, $query, $params ) )
-			{
-				die("Error during Query: " . pg_error());
-			}
 
-			return $result;
-		}
+		return $result;
 	
 	}
 	
-	function queryToArray( $query, $params )
+	function queryToArray( $query, $params = array() )
 	{
 		$result = array();
 		$qresult = $this->query( $query, $params );
@@ -61,14 +49,14 @@ class DataAdapter
 		return $result;
 	}
 	
-	function queryToJSON( $query, $params )
+	function queryToJSON( $query, $params  = array() )
 	{
 		$result = $this->queryToArray( $query, $params );
 		
 		return json_encode($result);
 	}
 
-	function evalQueryToJSON( $query, $params )
+	function evalQueryToJSON( $query, $params  = array() )
 	{
 		$json = $this->queryToJSON( $query, $params );
 
