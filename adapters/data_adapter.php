@@ -1,16 +1,23 @@
 <?
 
-@include("connect.php");
-
 class DataAdapter
 {
+
+	private static $db_login_data = array(
+	    "host" => "link",
+	    "user" => "btw2009",
+	    "password" => "btw2009",
+	    "db" => "btw2009"
+	);
+
+
 	var $dbConnection;
 
-	function DataAdapter( $host, $db, $username, $password )
+	function DataAdapter( )
 	{
-		$dbConnString = "host=".$db_login_data["host"]." dbname=".$db_login_data["db"]." user=".$db_login_data["user"]." password=".$db_login_data["password"];
+		$dbConnString = "host=".self::$db_login_data["host"]." dbname=".self::$db_login_data["db"]." user=".self::$db_login_data["user"]." password=".self::$db_login_data["password"];
 
-		$this->dbConnection = pg_pconnect($dbConnString);
+		$this->dbConnection = pg_pconnect($dbConnString) or die("bla");
 	}
 
 
@@ -21,9 +28,9 @@ class DataAdapter
 
 	function query( $query )
 	{
-		if( !$result = pg_query( $this->dbConnection, pg_escape_string ( $this->dbConnection, $query ) )
+		if( !$result = pg_query( $this->dbConnection, pg_escape_string ( $this->dbConnection, $query ) ) )
 		{
-			die "Error during Query: " . pg_error();
+			die("Error during Query: " . pg_error());
 		}
 
 		return $result;
@@ -48,6 +55,13 @@ class DataAdapter
 		return json_encode($result);
 	}
 
+	function evalQueryToJSON( $query )
+	{
+		$json = $this->queryToJSON( $query );
+
+		header('Content-type: application/json');
+		echo $json;
+	}
 }
 
 ?>
