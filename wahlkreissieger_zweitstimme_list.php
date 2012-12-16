@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <title id='Description'>Tabellarische Übersicht über die Sitzverteilung im Bundestag</title>
+   <title id='Description'>Tabellarische Übersicht über die Wahlkreissieger bezüglich der Zweitstimme</title>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -24,7 +24,7 @@
 					 { name: 'wahlkreis'},
 					 { name: 'partei'}
 				],
-				url: 'adapters/wahlkreissieger_partei_erststimme.php?'
+				url: 'adapters/wahlkreissieger_partei_zweitstimme.php?'
 			};
 
 
@@ -35,7 +35,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             {
                 source: dataAdapter,
                 columns: [
-                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 100 },
+                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
                   { text: 'Partei', datafield: 'partei', width: 100 }
                 ]
             });
