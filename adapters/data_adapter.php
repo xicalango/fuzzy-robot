@@ -13,6 +13,9 @@ class DataAdapter
 
 	var $dbConnection;
 
+	/** Creates a new DataAdapter with default credentials
+	*
+	*/
 	function DataAdapter( )
 	{
 		$dbConnString = "host=".self::$db_login_data["host"]." dbname=".self::$db_login_data["db"]." user=".self::$db_login_data["user"]." password=".self::$db_login_data["password"];
@@ -20,12 +23,17 @@ class DataAdapter
 		$this->dbConnection = pg_pconnect($dbConnString) or die("bla");
 	}
 
-
+	/** Closes a DataAdapter (not really needed)
+	*
+	*/
 	function close()
 	{
 		pg_close($this->dbConnection);
 	}
 
+	/** Executes a query 
+	* \return A postgres query result cursor 
+	*/
 	function query( $query, $params = array() )
 	{
 		if( !$result = pg_query_params( $this->dbConnection, $query, $params ) )
@@ -37,6 +45,9 @@ class DataAdapter
 	
 	}
 	
+	/** Executes a query and pushes the results into an array
+	*
+	*/
 	function queryToArray( $query, $params = array() )
 	{
 		$result = array();
@@ -49,6 +60,9 @@ class DataAdapter
 		return $result;
 	}
 	
+	/** Executes a query and returns the result as json array
+	*
+	*/
 	function queryToJSON( $query, $params  = array() )
 	{
 		$result = $this->queryToArray( $query, $params );
@@ -56,6 +70,9 @@ class DataAdapter
 		return json_encode($result);
 	}
 
+	/** Executes a query, sets the header to json and prints the json result
+	*
+	*/
 	function evalQueryToJSON( $query, $params  = array() )
 	{
 		$json = $this->queryToJSON( $query, $params );
