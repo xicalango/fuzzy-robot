@@ -38,7 +38,7 @@ class DataAdapter
 	{
 		if( !$result = pg_query_params( $this->dbConnection, $query, $params ) )
 		{
-			die("Error during Query: " . pg_error());
+			die("Error during Query: " . pg_last_error($this->dbConnection));
 		}
 
 		return $result;
