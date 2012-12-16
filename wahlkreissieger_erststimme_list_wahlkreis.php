@@ -29,7 +29,7 @@
 					 { name: 'wahlkreis'},
 					 { name: 'partei'}
 				],
-				url: <?php echo $url; ?>
+				url: "" + <?php echo $url; ?>
 			};
 
 
