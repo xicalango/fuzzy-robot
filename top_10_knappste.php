@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-   <title id='Description'>Tabellarische Übersicht über die Wahlkreissieger bezüglich der Zweitstimme</title>
+   <title id='Description'>Tabellarische Übersicht über die 10 knappsten Sieger einer Partei</title>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -15,16 +15,22 @@
         $(document).ready(function () {
             // prepare the data
             
-								
+			
+			<?php
+			$partei_id = $_GET["parteiid"];	
+			$url = 'adapters/wahlkreissieger_partei_erststimme.php?parteiid=' . $partei_id;
+			?>
+			
 			
 		var source =
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'wahlkreis'},
+					 { name: 'vorname'},
+					 { name: 'nachname'},
 					 { name: 'partei'}
 				],
-				url: 'adapters/wahlkreissieger_partei_zweitstimme.php'
+				url: <?php echo '\'' . $url . '\''; ?>
 			};
 
 
@@ -35,8 +41,9 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             {
                 source: dataAdapter,
                 columns: [
-                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
-                  { text: 'Partei', datafield: 'partei', width: 100 }
+                  { text: 'Vorname', datafield: 'vorname', width: 100 },
+                  { text: 'Nachname', datafield: 'nachname', width: 100 },
+				  { text: 'Partei', datafield: 'partei', width: 100 }
                 ]
             });
         });
