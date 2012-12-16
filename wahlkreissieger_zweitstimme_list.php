@@ -24,7 +24,7 @@
 					 { name: 'wahlkreis'},
 					 { name: 'partei'}
 				],
-				url: 'adapters/wahlkreissieger_partei_zweitstimme.php?'
+				url: 'adapters/wahlkreissieger_partei_zweitstimme.php'
 			};
 
 
