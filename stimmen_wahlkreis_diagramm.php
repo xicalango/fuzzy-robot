@@ -5,8 +5,12 @@
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="lib/jqwidgets/jqxdocking.js"></script>
+    <script type="text/javascript" src="lib/jqwidgets/jqxwindow.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxchart.js"></script>
-    <script type="text/javascript" src="lib/jqwidgets/jqxdata.js"></script>    
+    <script type="text/javascript" src="lib/jqwidgets/jqxdata.js"></script>   
+    <script type="text/javascript" src="lib/jqwidgets/jqxpanel.js"></script>
+    <script type="text/javascript" src="lib/jqwidgets/jqxsplitter.js"></script>
 	<script type="text/javascript">
         $(document).ready(function () {
             // prepare chart data
@@ -233,29 +237,77 @@
             $('#jqxChartZP').jqxChart(settings_zp);
 
 
+	$.get('adapters/gewaehlte_direktkandidaten_wahlkreis.php?wahlkreisid=<?=$_GET["wahlkreisid"]?>', function(data) {
+	
+		var candidat = data[0];
 
+		$('#kandidat_text').html('<b>' + candidat.vorname + ' ' + candidat.nachname + '</b>');
 
+	});
 
+		
+	$('#docking').jqxDocking({ theme: 'classic', orientation: 'horizontal', });
         });
     </script>
 </head>
 <body class='default'>
 <div>
-    <div id='jqxChart' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
-    </div>
+	<div id='docking'>
+	<div>
+		<div id='infos_window'>
+			<div>Infos</div>
+			<div>
+				<div id='wahlbeteiligung'>
+					Wahlbeteiligung: 
+					<div id='wahlbeteiligung_text' style='display:inline' ></div>
+				</div>
 
-  <div id='jqxChartZ' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
-    </div>
+				<div id='kandidat'>
+					Gew&auml;hlter Direktkandidat:
+					<div id='kandidat_text' style='display:inline' ></div>
+				</div>
+			</div>
+		</div>
+
+		<div id='jqxChart_window'>
+			<div>Erststimmen</div>
+			<div>
+
+				<div id='jqxChart' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
+				</div>
+			</div>
+		</div>
+
+		<div id='jqxChartZ_window'>
+			<div>Erststimmen (prozent)</div>
+			<div>
+				<div id='jqxChartZ' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div>
+
+		<div id='jqxChartP_window'>
+			<div>Zweitstimmen</div>
+			<div>
+				<div id='jqxChartP' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
+				</div>
+			</div>
+		</div>
+
+		<div id='jqxChartZP_window'>
+			<div>Zweitstimmen (prozent)</div>
+			<div>
+				<div id='jqxChartZP' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;" >
+				</div>
+			</div>
+		</div>
+
+	</div>
+	</div>
 </div>
-<div>
-
-    <div id='jqxChartP' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
-    </div>
-
-    <div id='jqxChartZP' style="width:680px; height:400px; position: relative; left: 0px; top: 0px; display:inline-block;">
-    </div>
- </div>
-
 </body>
 </html>
 
