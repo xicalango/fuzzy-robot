@@ -6,10 +6,10 @@ $partei_id = $_GET["parteiid"];
 
 $da = new DataAdapter();
 $da->evalQueryToJSON( "(
-SELECT ks.vorname, ks.nachname, p.name as partei, ks.diff as differenz from get_10_knappste_sieger($1) ks, partei p 
+SELECT ks.vorname, ks.nachname, p.name as partei, ks.differenz from get_10_knappste_sieger($1) ks, partei p 
 where p.id = ks.partei_id
 union 
-SELECT ks.vorname, ks.nachname, p.name as partei, ks.diff as differenz from get_10_knappste_verlierer($1) ks, partei p 
+SELECT ks.vorname, ks.nachname, p.name as partei, ks.differenz from get_10_knappste_verlierer($1) ks, partei p 
 where p.id = ks.partei_id)", [ $partei_id] );
 
 ?>
