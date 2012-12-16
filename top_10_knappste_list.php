@@ -18,7 +18,7 @@
 			
 			<?php
 			$partei_id = $_GET["parteiid"];	
-			$url = 'adapters/wahlkreissieger_partei_erststimme.php?parteiid=' . $partei_id;
+			$url = 'adapters/top_10_knappste.php?parteiid=' . $partei_id;
 			?>
 			
 			
