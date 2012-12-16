@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
    <title id='Description'>Tabellarische Übersicht über die Wahlkreissieger bezüglich der Erststimme</title>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
