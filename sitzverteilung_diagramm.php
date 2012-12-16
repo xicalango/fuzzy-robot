@@ -19,7 +19,7 @@
 					 { name: 'name'},
 					 { name: 'sitze', type: 'number'}
 				],
-				url: 'adapters/sitzverteilung_diag_daten'
+				url: 'adapters/sitzverteilung_diag_daten.php'
 			};
 
 		   var dataAdapter = new $.jqx.dataAdapter(source,
@@ -51,17 +51,11 @@
                 seriesGroups:
                     [
                         {
-                            type: 'column',
+                            type: 'pie',
                             columnsGapPercent: 100,
-                            valueAxis:
-                            {
-                                unitInterval: 10,
-                                maxValue: 30,
-                                displayValueAxis: true,
-                                description: '%'
-                            },
+			    showLabels: true,
                             series: [
-                                    { dataField: 'sitze', displayText: ' ' }
+                                    { dataField: 'sitze', displayText: 'name' }
                                 ]
                         }
                     ]
