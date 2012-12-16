@@ -30,7 +30,7 @@
 					 { name: 'vorname'},
 					 { name: 'nachname'},
 					 { name: 'partei'},
-					 { name: 'differenz'}
+					 { name: 'differenz', type:'int'}
 				],
 				url: <?php echo '\'' . $url . '\''; ?>
 			};
