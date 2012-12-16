@@ -15,12 +15,7 @@
         $(document).ready(function () {
             // prepare the data
             
-			
-			<?php
-			$wahlkreis_id = $_GET["wahlkreisid"];	
-			$url = 'adapters/wahlkreissieger_partei_erststimme.php?wahlkreisid=' . $wahlkreis_id;
-			?>
-			
+								
 			
 		var source =
 			{
@@ -29,7 +24,7 @@
 					 { name: 'wahlkreis'},
 					 { name: 'partei'}
 				],
-				url: <?php echo '\'' . $url . '\''; ?>
+				url: 'adapters/wahlkreissieger_partei_erststimme.php?'
 			};
 
 
