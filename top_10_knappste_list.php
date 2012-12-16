@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="lib/jqwidgets/jqxscrollbar.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.js"></script>
+	<script type="text/javascript" src="lib/jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.selection.js"></script>
 	<script type="text/javascript">
         $(document).ready(function () {
@@ -41,6 +42,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             $("#jqxgrid").jqxGrid(
             {
                 source: dataAdapter,
+				sortable: true,
                 columns: [
                   { text: 'Vorname', datafield: 'vorname', width: 100 },
                   { text: 'Nachname', datafield: 'nachname', width: 100 },
@@ -49,6 +51,15 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 ]
             });
         });
+		
+				
+		$("#jqxgrid").bind('bindingcomplete', function()
+		{
+		$("#jqxgrid").jqxGrid('sortby', 'differenz', 'asc');
+		});
+		
+		
+		
     </script>
 </head>
 <body class='default'>
