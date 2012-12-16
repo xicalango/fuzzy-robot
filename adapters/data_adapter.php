@@ -26,20 +26,33 @@ class DataAdapter
 		pg_close($this->dbConnection);
 	}
 
-	function query( $query )
+	function query( $query, $params )
 	{
-		if( !$result = pg_query( $this->dbConnection, pg_escape_string ( $this->dbConnection, $query ) ) )
+		if($params == null)
 		{
-			die("Error during Query: " . pg_error());
-		}
+			if( !$result = pg_query( $this->dbConnection, $query ) )
+			{
+				die("Error during Query: " . pg_error());
+			}
 
-		return $result;
+			return $result;
+		}
+		else
+		{
+			if( !$result = pg_query( $this->dbConnection, $query, $params ) )
+			{
+				die("Error during Query: " . pg_error());
+			}
+
+			return $result;
+		}
+	
 	}
 	
-	function queryToArray( $query )
+	function queryToArray( $query, $params )
 	{
 		$result = array();
-		$qresult = $this->query( $query );
+		$qresult = $this->query( $query, $params );
 
 		while($arr = pg_fetch_assoc($qresult)) {
 			array_push($result, $arr);
@@ -48,16 +61,16 @@ class DataAdapter
 		return $result;
 	}
 	
-	function queryToJSON( $query )
+	function queryToJSON( $query, $params )
 	{
-		$result = $this->queryToArray( $query );
+		$result = $this->queryToArray( $query, $params );
 		
 		return json_encode($result);
 	}
 
-	function evalQueryToJSON( $query )
+	function evalQueryToJSON( $query, $params )
 	{
-		$json = $this->queryToJSON( $query );
+		$json = $this->queryToJSON( $query, $params );
 
 		header('Content-type: application/json');
 		echo $json;
