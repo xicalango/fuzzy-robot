@@ -17,7 +17,7 @@
 				 datatype: "json",
 				 datafields: [
 					 { name: 'name'},
-					 { name: 'prozent', type: 'number'}
+					 { name: 'sitze', type: 'number'}
 				],
 				url: 'adapters/sitzverteilung_diag_daten'
 			};
