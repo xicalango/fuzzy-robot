@@ -6,9 +6,7 @@
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxchart.js"></script>
-    <script type="text/javascript" src="lib/jqwidgets/jqxdata.js"></script>
-    <script type="text/javascript">
-    
+    <script type="text/javascript" src="lib/jqwidgets/jqxdata.js"></script>    
 	<script type="text/javascript">
         $(document).ready(function () {
             // prepare chart data
