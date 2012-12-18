@@ -22,7 +22,7 @@
 				 datatype: "json",
 				 datafields: [
 					 { name: 'wahlkreis'},
-					 { name: 'partei'}
+					 { name: 'partei_name'}
 				],
 				url: 'adapters/wahlkreissieger_partei_zweitstimme.php'
 			};
@@ -36,7 +36,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 source: dataAdapter,
                 columns: [
                   { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
-                  { text: 'Partei', datafield: 'partei', width: 100 }
+                  { text: 'Partei', datafield: 'partei_name', width: 100 }
                 ]
             });
         });
