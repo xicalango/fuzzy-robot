@@ -55,7 +55,7 @@
                             columnsGapPercent: 100,
 			    showLabels: true,
                             series: [
-                                    { dataField: 'sitze', displayText: 'name' }
+                                    { dataField: 'sitze', displayText: 'partei_name' }
                                 ]
                         }
                     ]
