@@ -20,7 +20,7 @@
 				 datatype: "json",
 				 datafields: [
 					 { name: 'partei_name'},
-					 { name: 'sitze', type: 'number'}
+					 { name: 'stimmen', type: 'number'}
 				],
 				url: 'adapters/erststimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
@@ -62,7 +62,7 @@
                                 displayValueAxis: true
                             },
                             series: [
-                                    { dataField: 'sitze', displayText: 'Stimmen' }
+                                    { dataField: 'stimmen', displayText: 'Stimmen' }
                                 ]
                         }
                     ]
@@ -132,7 +132,7 @@
 				 datatype: "json",
 				 datafields: [
 					 { name: 'partei_name'},
-					 { name: 'sitze', type: 'number'}
+					 { name: 'stimmen', type: 'number'}
 				],
 				url: 'adapters/zweitstimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
@@ -174,7 +174,7 @@
                                 displayValueAxis: true
                             },
                             series: [
-                                    { dataField: 'sitze', displayText: 'Stimmen' }
+                                    { dataField: 'stimmen', displayText: 'Stimmen' }
                                 ]
                         }
                     ]
