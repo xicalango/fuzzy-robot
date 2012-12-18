@@ -22,7 +22,7 @@
 				 datafields: [
 					 { name: 'vorname'},
 					 { name: 'nachname'},
-					 { name: 'partei'}
+					 { name: 'partei_name'}
 				],
 				url: 'adapters/mitglieder_bundestag_list_daten.php'
 			};
@@ -37,7 +37,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 columns: [
                   { text: 'Vorname', datafield: 'vorname', width: 100 },
                   { text: 'Nachname', datafield: 'nachname', width: 100 },
-                  { text: 'Partei', datafield: 'partei', width: 180 }
+                  { text: 'Partei', datafield: 'partei_name', width: 180 }
                 ]
             });
         });

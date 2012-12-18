@@ -19,7 +19,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'partei_id'},
+					 { name: 'partei_name'},
 					 { name: 'sitze', type: 'number'}
 				],
 				url: 'adapters/erststimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
@@ -46,7 +46,7 @@
                 source: dataAdapter,
                 categoryAxis:
                     {
-                        dataField: 'partei_id',
+                        dataField: 'partei_name',
                         showGridLines: true
                     },
                 colorScheme: 'scheme05',
@@ -75,7 +75,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'partei_id'},
+					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
 				url: 'adapters/erststimme_prozent_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
@@ -99,7 +99,7 @@
                 source: dataAdapter_p,
                 categoryAxis:
                     {
-                        dataField: 'partei_id',
+                        dataField: 'partei_name',
                         showGridLines: true
                     },
                 colorScheme: 'scheme05',
@@ -131,7 +131,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'partei_id'},
+					 { name: 'partei_name'},
 					 { name: 'sitze', type: 'number'}
 				],
 				url: 'adapters/zweitstimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
@@ -158,7 +158,7 @@
                 source: dataAdapter_z,
                 categoryAxis:
                     {
-                        dataField: 'partei_id',
+                        dataField: 'partei_name',
                         showGridLines: true
                     },
                 colorScheme: 'scheme05',
@@ -187,7 +187,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'partei_id'},
+					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
 				url: 'adapters/zweitstimme_prozent_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
@@ -211,7 +211,7 @@
                 source: dataAdapter_zp,
                 categoryAxis:
                     {
-                        dataField: 'partei_id',
+                        dataField: 'partei_name',
                         showGridLines: true
                     },
                 colorScheme: 'scheme05',
