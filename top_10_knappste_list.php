@@ -49,7 +49,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                   { text: 'Vorname', datafield: 'vorname', width: 100 },
                   { text: 'Nachname', datafield: 'nachname', width: 100 },
 				  { text: 'Partei', datafield: 'partei_name', width: 50 },
-				  { text_ 'Wahlkreis', datafield: 'wahlkreis', width: 120},
+				  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 120},
 				   { text: 'Differenz', datafield: 'differenz', width: 100 }
                 ]
             });
