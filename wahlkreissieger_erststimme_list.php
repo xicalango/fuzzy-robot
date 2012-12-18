@@ -22,7 +22,9 @@
 				 datatype: "json",
 				 datafields: [
 					 { name: 'wahlkreis'},
-					 { name: 'partei'}
+					 { name: 'partei_name'},
+					 { name: 'vorname'},
+					 { name: 'nachname'}
 				],
 				url: 'adapters/wahlkreissieger_partei_erststimme.php?'
 			};
@@ -36,7 +38,10 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 source: dataAdapter,
                 columns: [
                   { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
-                  { text: 'Partei', datafield: 'partei', width: 100 }
+                  { text: 'Partei', datafield: 'partei_name', width: 100 },
+				  { text: 'Nachname', datafield: 'nachname', width: 100 },
+				  { text: 'Vorname', datafield: 'vorname', width: 100 }
+				    
                 ]
             });
         });
