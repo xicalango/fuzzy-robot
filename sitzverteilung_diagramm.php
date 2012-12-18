@@ -16,7 +16,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'name'},
+					 { name: 'partei_name'},
 					 { name: 'sitze', type: 'number'}
 				],
 				url: 'adapters/sitzverteilung_diag_daten.php'
@@ -44,7 +44,7 @@
                 source: dataAdapter,
                 categoryAxis:
                     {
-                        dataField: 'name',
+                        dataField: 'partei_name',
                         showGridLines: true
                     },
                 colorScheme: 'scheme05',

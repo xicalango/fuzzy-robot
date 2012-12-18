@@ -20,7 +20,7 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'name'},
+					 { name: 'partei_name'},
 					 { name: 'sitze', type: 'number'}
 				],
 				url: 'adapters/sitzverteilung_diag_daten.php'
@@ -34,7 +34,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             {
                 source: dataAdapter,
                 columns: [
-                  { text: 'Partei', datafield: 'name', width: 100 },
+                  { text: 'Partei', datafield: 'partei_name', width: 100 },
                   { text: 'Sitze', datafield: 'sitze', width: 100 }
                 ]
             });
