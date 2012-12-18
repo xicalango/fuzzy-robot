@@ -29,8 +29,10 @@
 				 datafields: [
 					 { name: 'vorname'},
 					 { name: 'nachname'},
-					 { name: 'partei'},
-					 { name: 'differenz', type:'int'}
+					 { name: 'partei_name'},
+					 { name: 'differenz', type:'int'},
+					 { name: 'wahlkreis'}
+					 
 				],
 				url: <?php echo '\'' . $url . '\''; ?>
 			};
@@ -46,7 +48,8 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 columns: [
                   { text: 'Vorname', datafield: 'vorname', width: 100 },
                   { text: 'Nachname', datafield: 'nachname', width: 100 },
-				  { text: 'Partei', datafield: 'partei', width: 100 },
+				  { text: 'Partei', datafield: 'partei_name', width: 50 },
+				  { text_ 'Wahlkreis', datafield: 'wahlkreis', width: 120},
 				   { text: 'Differenz', datafield: 'differenz', width: 100 }
                 ]
             });
