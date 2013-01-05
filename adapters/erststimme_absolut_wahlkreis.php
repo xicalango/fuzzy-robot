@@ -5,6 +5,6 @@
 $wahlkreis_id = $_GET["wahlkreisid"];
 
 $da = new DataAdapter();
-$da->evalQueryToJSON( "SELECT * FROM get_absolute_erststimmen_by_wahlkreis($1)", [$wahlkreis_id] );
+$da->evalQueryToJSON( "SELECT * FROM get_absolute_erststimmen_by_wahlkreis($1) ORDER BY stimmen DESC", [$wahlkreis_id] );
 
 ?>
