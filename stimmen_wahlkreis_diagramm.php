@@ -237,10 +237,13 @@
             $('#jqxChartZP').jqxChart(settings_zp);
 
 
-	$.get('adapters/gewaehlte_direktkandidaten_wahlkreis.php?wahlkreisid=<?=$_GET["wahlkreisid"]?>', function(data) {
-	
-		var candidat = data[0];
+	$.get('adapters/wahlkreis_info.php?wahlkreisid=<?=$_GET["wahlkreisid"]?>', function(data) {
 
+		
+		var candidat = data.direktkandidat;
+
+		$('#wahlkreis_text').html('<b>' + data.name + '</b>');
+		$('#wahlbeteiligung_text').html('<b>' + data.beteiligung + ' %</b>');
 		$('#kandidat_text').html('<b>' + candidat.vorname + ' ' + candidat.nachname + '</b>');
 
 	});
@@ -257,6 +260,10 @@
 		<div id='infos_window'>
 			<div>Infos</div>
 			<div>
+				<div id='wahlkreis'>
+					Wahlkreis:
+					<div id='wahlkreis_text' style='display:inline'></div>
+				</div>
 				<div id='wahlbeteiligung'>
 					Wahlbeteiligung: 
 					<div id='wahlbeteiligung_text' style='display:inline' ></div>

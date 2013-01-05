@@ -70,6 +70,11 @@ class DataAdapter
 		return json_encode($result);
 	}
 
+	function setJSONHeader()
+	{
+		header('Content-type: application/json');
+	}
+
 	/** Executes a query, sets the header to json and prints the json result
 	*
 	*/
@@ -77,7 +82,7 @@ class DataAdapter
 	{
 		$json = $this->queryToJSON( $query, $params );
 
-		header('Content-type: application/json');
+		$this->setJSONHEader();
 		echo $json;
 	}
 }
