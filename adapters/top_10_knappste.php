@@ -5,6 +5,6 @@
 $partei_id = $_GET["parteiid"];
 
 $da = new DataAdapter();
-$da->evalQueryToJSON( "select * from get_top_10($1)", [ $partei_id] );
+$da->evalQueryToJSON( "select * from adapter.top_10($1)", [ $partei_id] );
 
 ?>

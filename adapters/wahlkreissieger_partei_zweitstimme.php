@@ -4,6 +4,6 @@
 
 
 $da = new DataAdapter();
-$da->evalQueryToJSON( "SELECT * FROM wahlkreissieger_partei_zweitstimme");
+$da->evalQueryToJSON( "SELECT * FROM adapter.wahlkreissieger_partei_zweitstimme");
 
 ?>
