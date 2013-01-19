@@ -3,7 +3,7 @@
 @include("adapters/data_adapter.php");
 
 $da = new DataAdapter();
-$parteien = $da->queryToArray("SELECT id, name as text FROM partei" );
+$parteien = $da->queryToArray("SELECT id, name as text FROM partei order by name" );
 
 $partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
 

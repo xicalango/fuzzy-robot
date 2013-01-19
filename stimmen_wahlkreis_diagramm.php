@@ -3,7 +3,7 @@
 @include("adapters/data_adapter.php");
 
 $da = new DataAdapter();
-$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
+$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009' order by name");
 
 $bundesland_id = !empty($_GET['bundeslandid']) ? (int)$_GET['bundeslandid'] : 0;
 $wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;

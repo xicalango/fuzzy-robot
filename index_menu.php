@@ -15,6 +15,12 @@
 			}
 		});
 	}
+	$(document).ready(function(){
+		 $('#menu a').click(function(){
+			setAjaxContent($(this).attr('href')); 
+			return false;
+		});
+	});
 </script>
 <style type="text/css">
 body {
@@ -97,19 +103,19 @@ select {
 <body>
 
 	<ul id="menu">
-		<li><a href="sitzverteilung_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Sitzverteilung</a></li>
-		<li><a href="mitglieder_bundestag_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Mitglieder des Bundestags</a></li>
-		<li><a href="ueberhangmandate_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
+		<li><a href="sitzverteilung_diagramm.php">Sitzverteilung</a></li>
+		<li><a href="mitglieder_bundestag_list.php">Mitglieder des Bundestags</a></li>
+		<li><a href="ueberhangmandate_list.php">Überhangmandate</a></li>
 		<li><a href="#">Wahlkreisergebnisse</a>
 			<ul>
-				<li><a href="stimmen_wahlkreis_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreisübersicht</a></li>
-				<li><a href="wahlkreissieger_erststimme_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreissieger Erststimme</a></li>
-				<li><a href="wahlkreissieger_zweitstimme_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreissieger Zweitstimme</a></li>
-				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreisübersicht</a></li>
-				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreissieger</a></li>
+				<li><a href="stimmen_wahlkreis_diagramm.php">Wahlkreisübersicht</a></li>
+				<li><a href="wahlkreissieger_erststimme_list.php">Wahlkreissieger Erststimme</a></li>
+				<li><a href="wahlkreissieger_zweitstimme_list.php">Wahlkreissieger Zweitstimme</a></li>
+				<li><a href="#">Aggr. Wahlkreisübersicht</a></li>
+				<li><a href="#">Aggr. Wahlkreissieger</a></li>
 			</ul>
 		</li>
-		<li><a href="top_10_knappste_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
+		<li><a href="top_10_knappste_list.php">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
 	</div>
