@@ -99,6 +99,7 @@ select {
 	<ul id="menu">
 		<li><a href="sitzverteilung_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Sitzverteilung</a></li>
 		<li><a href="mitglieder_bundestag_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Mitglieder des Bundestags</a></li>
+		<li><a href="ueberhangmandate_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
 		<li><a href="#">Wahlkreisergebnisse</a>
 			<ul>
 				<li><a href="stimmen_wahlkreis_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreisübersicht</a></li>
@@ -108,7 +109,6 @@ select {
 				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreissieger</a></li>
 			</ul>
 		</li>
-		<li><a href="ueberhangmandate_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
 		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
