@@ -103,6 +103,7 @@ select {
 <body>
 
 	<ul id="menu">
+		<li><a href="home.php">Start</a></li>
 		<li><a href="sitzverteilung_diagramm.php">Sitzverteilung</a></li>
 		<li><a href="mitglieder_bundestag_list.php">Mitglieder des Bundestags</a></li>
 		<li><a href="ueberhangmandate_list.php">Überhangmandate</a></li>
@@ -118,6 +119,9 @@ select {
 		<li><a href="top_10_knappste_list.php">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
+		<?php
+		@include('home.php');
+		?>
 	</div>
 	
 	
