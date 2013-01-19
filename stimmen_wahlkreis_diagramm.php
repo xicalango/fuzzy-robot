@@ -4,7 +4,6 @@
 
 $da = new DataAdapter();
 $bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
-$bundeslaender = $da->queryToJSON("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
 var_dump($bundeslaender);
 
 ?>
