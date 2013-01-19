@@ -109,7 +109,7 @@ select {
 				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreissieger</a></li>
 			</ul>
 		</li>
-		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
+		<li><a href="top_10_knappste_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
 	</div>
