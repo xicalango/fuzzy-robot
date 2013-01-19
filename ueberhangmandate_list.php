@@ -20,7 +20,7 @@ $partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
 	$da = new DataAdapter();
 	$parteien = $da->queryToArray( "select p.id, p.name as text from partei p, landesliste ll, land l 
 									where p.id = ll.partei_id and 
-									ll.land_id = l.idand l.id = ".$bundesland_id );
+									ll.land_id = l.id and l.id = ".$bundesland_id );
 
 	?>
 	<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?bundeslandid=<?=$bundesland_id;?>&parteiid='+$(this).val());">
