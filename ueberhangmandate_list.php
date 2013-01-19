@@ -83,3 +83,6 @@ var dataAdapter = new $.jqx.dataAdapter(source);
         <div id="jqxgrid"></div>
     </div>
 
+<?php
+}
+?>
