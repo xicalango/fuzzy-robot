@@ -1,7 +1,27 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="de">
-<head>
-<title id='Description'>Wahlkreisergebnisse</title>
+<?php
+
+@include("adapters/data_adapter.php");
+
+$da = new DataAdapter();
+$bundeslaender = $da->queryToJSON("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
+pa($bundeslaender);
+
+?>
+<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid='+$(this).val());">
+	<option value="">- Bundesland -</option>
+	<option value="1">Bayern</option>
+	<option value="12">Bremen</option>
+</select>
+<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?wahlkreisid='+$(this).val());">
+	<option value="">- Wahlkreis -</option>
+	<option value="1">Bayern</option>
+	<option value="12">Bremen</option>
+</select>
+
+
+<?php
+if(!empty($_GET['wahlkreisid'])){
+?>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -412,8 +432,7 @@
 	$('#docking').jqxDocking('showAllCollapseButtons');
         });
     </script>
-</head>
-<body class='default'>
+
 <div>
 	<div id='docking'>
 	<div style='width:15%'>
@@ -494,7 +513,8 @@
 	</div>
 	</div>
 </div>
-</body>
-</html>
 
+<?php
+}
+?>
 
