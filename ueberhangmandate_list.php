@@ -1,41 +1,4 @@
-    <?php
 
-@include("adapters/data_adapter.php");
-
-$da = new DataAdapter();
-$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
-
-$bundesland_id = !empty($_GET['bundeslandid']) ? (int)$_GET['bundeslandid'] : 0;
-$partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
-
-?>
-<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?bundeslandid='+$(this).val());">
-	<option value="">- Bundesland -</option>
-	<?foreach($bundeslaender as $k => $v){?>
-		<option value="<?=$v['id'];?>"<?php if($bundesland_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
-	<?}?>
-</select>
-<?if(!empty($bundesland_id)){
-
-	$da = new DataAdapter();
-	$parteien = $da->queryToArray( "select p.id, p.name as text from partei p, landesliste ll, land l 
-									where p.id = ll.partei_id and 
-									ll.land_id = l.id and l.id = ".$bundesland_id );
-
-	?>
-	<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?bundeslandid=<?=$bundesland_id;?>&parteiid='+$(this).val());">
-		<option value="">- Partei -</option>
-		<?foreach($parteien as $k => $v){?>
-			<option value="<?=$v['id'];?>"<?php if($partei_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
-		<?}?>
-	</select>
-<?}?>
-<div>&nbsp;</div>
-
-<?php
-if(!empty($_GET['parteiid'])){
-?>
-	
 	<link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
