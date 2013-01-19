@@ -2,7 +2,9 @@
 
 @include("data_adapter.php");
 
+$partei_id = $_GET["parteiid"];
+
 $da = new DataAdapter();
-$da->evalQueryToJSON( "select * from adapter.ueberhangmandate" );
+$da->evalQueryToJSON( "select * from adapter.ueberhangmandate where partei_id=", [$partei_id] );
 
 ?>
