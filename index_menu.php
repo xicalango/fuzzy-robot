@@ -35,6 +35,8 @@ ul#menu {
 	background:#eee;
 	border-radius:5px;
 	border:1px #aaa solid;
+	position:relative;
+	z-index:9999;
 }
 
 ul#menu li {
@@ -64,9 +66,10 @@ ul#menu li ul {
 	list-style:none;
 	padding:0;
 	margin:0;
-	border:1px #ccc solid;
+	border:1px #aaa solid;
 	/*width:200%;*/
 	background:#fff; /*rgba(255, 255, 255, 0.8);*/
+	box-shadow:0 1px 3px rgba(0,0,0, 0.2);
 }
 
 ul#menu li ul li {
@@ -94,18 +97,19 @@ select {
 <body>
 
 	<ul id="menu">
-		<li><a href="#">Sitzverteilung</a></li>
-		<li><a href="#">Mitglieder des Bundestags</a></li>
+		<li><a href="sitzverteilung_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Sitzverteilung</a></li>
+		<li><a href="mitglieder_bundestag_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Mitglieder des Bundestags</a></li>
 		<li><a href="#">Wahlkreisergebnisse</a>
 			<ul>
-				<li><a href="stimmen_wahlkreis_diagramm.php?wahlkreisid=" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreisübersicht</a></li>
-				<li><a href="#">Wahlkreissieger</a></li>
-				<li><a href="#">Aggr. Wahlkreisübersicht</a></li>
-				<li><a href="#">Aggr. Wahlkreissieger</a></li>
+				<li><a href="stimmen_wahlkreis_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreisübersicht</a></li>
+				<li><a href="wahlkreissieger_erststimme_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreissieger Erststimme</a></li>
+				<li><a href="wahlkreissieger_zweitstimme_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreissieger Zweitstimme</a></li>
+				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreisübersicht</a></li>
+				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreissieger</a></li>
 			</ul>
 		</li>
-		<li><a href="#" target="">Überhangmandate</a></li>
-		<li><a href="#">Knappste Sieger</a></li>
+		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
+		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
 	</div>

@@ -1,7 +1,3 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-   <title id='Description'>Tabellarische Übersicht über die Wahlkreissieger bezüglich der Zweitstimme</title>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -41,10 +37,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             });
         });
     </script>
-</head>
-<body class='default'>
+
     <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
         <div id="jqxgrid"></div>
     </div>
-</body>
-</html>
