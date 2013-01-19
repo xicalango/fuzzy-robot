@@ -3,13 +3,13 @@
 @include("adapters/data_adapter.php");
 
 $da = new DataAdapter();
-$bundeslaender = $da->queryToJSON("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
-pa($bundeslaender);
-
+$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
 ?>
 <select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid='+$(this).val());">
 	<option value="">- Bundesland -</option>
-	<option value="1">Bayern</option>
+	<?foreach($bundeslaender as $k => $v){?>
+		<option value="<?=$v['id'];?>"><?=$v['text'];?></option>
+	<?}?>
 	<option value="12">Bremen</option>
 </select>
 <select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?wahlkreisid='+$(this).val());">
