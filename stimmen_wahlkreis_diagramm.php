@@ -20,8 +20,7 @@ $wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;
 	$da = new DataAdapter();
 	$wahlkreise = $da->queryToArray( "SELECT id, land_id as parentid, name as text FROM wahlkreis WHERE land_id=".$bundesland_id );
 
-
-?>
+	?>
 	<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid=<?=$bundesland_id;?>&wahlkreisid='+$(this).val());">
 		<option value="">- Wahlkreis -</option>
 		<?foreach($wahlkreise as $k => $v){?>
@@ -29,7 +28,7 @@ $wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;
 		<?}?>
 	</select>
 <?}?>
-
+<div>&nbsp;</div>
 
 <?php
 if(!empty($_GET['wahlkreisid'])){

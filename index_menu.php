@@ -78,6 +78,16 @@ ul#menu li:hover ul {
 	display:block;
 }
 
+#ajaxcontent {
+	margin:20px 0;
+}
+select {
+	padding:5px;
+	border:1px #ccc solid;
+	font-family:Verdana;
+	border-radius:5px;
+}
+
 
 </style>
 </head>
@@ -97,8 +107,8 @@ ul#menu li:hover ul {
 		<li><a href="#" target="">Überhangmandate</a></li>
 		<li><a href="#">Knappste Sieger</a></li>
 	</ul>
-
-	<div id="ajaxcontent"></div>
+	<div id="ajaxcontent">
+	</div>
 	
 	
 	
