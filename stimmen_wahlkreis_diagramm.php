@@ -4,21 +4,31 @@
 
 $da = new DataAdapter();
 $bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
-var_dump($bundeslaender);
+
+$bundesland_id = !empty($_GET['bundeslandid']) ? (int)$_GET['bundeslandid'] : 0;
+$wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;
 
 ?>
 <select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid='+$(this).val());">
 	<option value="">- Bundesland -</option>
 	<?foreach($bundeslaender as $k => $v){?>
-		<option value="<?=$v['id'];?>"><?=$v['text'];?></option>
+		<option value="<?=$v['id'];?>"<?php if($bundesland_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
 	<?}?>
-	<option value="12">Bremen</option>
 </select>
-<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?wahlkreisid='+$(this).val());">
-	<option value="">- Wahlkreis -</option>
-	<option value="1">Bayern</option>
-	<option value="12">Bremen</option>
-</select>
+<?if(!empty($bundesland_id)){
+
+	$da = new DataAdapter();
+	$wahlkreise = $da->queryToArray( "SELECT id, land_id as parentid, name as text FROM wahlkreis WHERE land_id=".$bundesland_id );
+
+
+?>
+	<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid=<?=$bundesland_id;?>&wahlkreisid='+$(this).val());">
+		<option value="">- Wahlkreis -</option>
+		<?foreach($wahlkreise as $k => $v){?>
+			<option value="<?=$v['id'];?>"<?php if($wahlkreis_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
+		<?}?>
+	</select>
+<?}?>
 
 
 <?php
