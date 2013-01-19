@@ -4,6 +4,9 @@
 
 $da = new DataAdapter();
 $bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
+$bundeslaender = $da->queryToJSON("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009'");
+var_dump($bundeslaender);
+
 ?>
 <select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid='+$(this).val());">
 	<option value="">- Bundesland -</option>
