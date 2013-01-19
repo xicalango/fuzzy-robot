@@ -17,7 +17,10 @@
 	}
 	$(document).ready(function(){
 		 $('#menu a').click(function(){
+			if($(this).attr('href') == '#') return false;
 			setAjaxContent($(this).attr('href')); 
+			$('#menu li').removeClass('active');
+			$(this).parent().addClass('active').parent().closest('li').addClass('active');
 			return false;
 		});
 	});
@@ -59,7 +62,8 @@ ul#menu li a {
 	text-decoration:none;
 }
 
-ul#menu li:hover > a {
+ul#menu li:hover > a,
+ul#menu li.active > a {
 	background:#ccc;
 	color:#333;
 }
@@ -81,6 +85,7 @@ ul#menu li ul {
 ul#menu li ul li {
 	display:block;
 	white-space:nowrap;
+	margin:0;
 }
 
 ul#menu li:hover ul {
