@@ -35,6 +35,8 @@ ul#menu {
 	background:#eee;
 	border-radius:5px;
 	border:1px #aaa solid;
+	position:relative;
+	z-index:9999;
 }
 
 ul#menu li {
@@ -94,8 +96,8 @@ select {
 <body>
 
 	<ul id="menu">
-		<li><a href="#">Sitzverteilung</a></li>
-		<li><a href="#">Mitglieder des Bundestags</a></li>
+		<li><a href="sitzverteilung_diagramm.php" onclick="setAjaxContent($(this).attr('href')); return false;">Sitzverteilung</a></li>
+		<li><a href="mitglieder_bundestag_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Mitglieder des Bundestags</a></li>
 		<li><a href="#">Wahlkreisergebnisse</a>
 			<ul>
 				<li><a href="stimmen_wahlkreis_diagramm.php?wahlkreisid=" onclick="setAjaxContent($(this).attr('href')); return false;">Wahlkreisübersicht</a></li>

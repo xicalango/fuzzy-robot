@@ -1,7 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="de">
-<head>
-    <title id='Description'>Sitzverteilung</title>
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -64,11 +60,9 @@
             $('#jqxChart').jqxChart(settings);
         });
     </script>
-</head>
-<body class='default'>
+	
     <div id='jqxChart' style="width:680px; height:400px; position: relative; left: 0px; top: 0px;">
     </div>
-</body>
-</html>
+
 
 
