@@ -9,7 +9,7 @@ $bundesland_id = !empty($_GET['bundeslandid']) ? (int)$_GET['bundeslandid'] : 0;
 $partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
 
 ?>
-<select size="1" onchange="setAjaxContent('<?=__FILE__;?>?bundeslandid='+$(this).val());">
+<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?bundeslandid='+$(this).val());">
 	<option value="">- Bundesland -</option>
 	<?foreach($bundeslaender as $k => $v){?>
 		<option value="<?=$v['id'];?>"<?php if($bundesland_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
@@ -23,7 +23,7 @@ $partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
 									ll.land_id = l.idand l.id = ".$bundesland_id );
 
 	?>
-	<select size="1" onchange="setAjaxContent('<?=__FILE__;?>?bundeslandid=<?=$bundesland_id;?>&parteiid='+$(this).val());">
+	<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?bundeslandid=<?=$bundesland_id;?>&parteiid='+$(this).val());">
 		<option value="">- Partei -</option>
 		<?foreach($parteien as $k => $v){?>
 			<option value="<?=$v['id'];?>"<?php if($partei_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
