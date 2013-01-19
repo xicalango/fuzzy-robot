@@ -108,7 +108,7 @@ select {
 				<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Aggr. Wahlkreissieger</a></li>
 			</ul>
 		</li>
-		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
+		<li><a href="ueberhangmandate_list.php" onclick="setAjaxContent($(this).attr('href')); return false;">Überhangmandate</a></li>
 		<li><a href="#" onclick="setAjaxContent($(this).attr('href')); return false;">Knappste Sieger</a></li>
 	</ul>
 	<div id="ajaxcontent">
