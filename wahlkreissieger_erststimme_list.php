@@ -45,7 +45,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 		
 		$("#jqxgrid").bind('bindingcomplete', function()
 		{
-		$("#jqxgrid").jqxGrid('sortby', 'nachname', 'asc');
+		$("#jqxgrid").jqxGrid('sortby', 'Nachname', 'asc');
 		});
     </script>
 
