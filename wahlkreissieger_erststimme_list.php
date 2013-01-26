@@ -32,10 +32,11 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             $("#jqxgrid").jqxGrid(
             {
                 source: dataAdapter,
+				sortable: true,
                 columns: [
                   { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
                   { text: 'Partei', datafield: 'partei_name', width: 100 },
-				  { text: 'Nachname', datafield: 'nachname', width: 100 },
+				  { text: 'Nachname', datafield: 'nachname', width: 150 },
 				  { text: 'Vorname', datafield: 'vorname', width: 100 }
 				    
                 ]
