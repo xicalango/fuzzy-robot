@@ -35,7 +35,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 source: dataAdapter,
 				sortable: true,
                 columns: [
-                  { text: 'Partei', datafield: 'partei_name', width: 180 },
+                  { text: 'Partei', datafield: 'partei_name', width: 100 },
 		  { text: 'Land', datafield: 'land_name', width: 250 },
 		  { text: 'Anzahl', datafield: 'anzahl', width: 100 }
 				    

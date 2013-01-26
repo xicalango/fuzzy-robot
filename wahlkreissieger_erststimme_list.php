@@ -36,7 +36,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 				sortable: true,
                 columns: [
                   { text: 'Wahlkreis', datafield: 'wahlkreis', width: 250 },
-                  { text: 'Partei', datafield: 'partei_name', width: 180 },
+                  { text: 'Partei', datafield: 'partei_name', width: 100 },
 				  { text: 'Nachname', datafield: 'nachname', width: 200 },
 				  { text: 'Vorname', datafield: 'vorname', width: 120 }
 				    
