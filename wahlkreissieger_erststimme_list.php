@@ -42,6 +42,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             });
         });
 		
+		
 		$("#jqxgrid").bind('bindingcomplete', function()
 		{
 		$("#jqxgrid").jqxGrid('sortby', 'nachname', 'asc');
