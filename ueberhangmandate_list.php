@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="lib/jqwidgets/jqxscrollbar.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.js"></script>
+	<script type="text/javascript" src="lib/jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.selection.js"></script>
 	<script type="text/javascript">
         $(document).ready(function () {
@@ -32,14 +33,20 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             $("#jqxgrid").jqxGrid(
             {
                 source: dataAdapter,
+				sortable: true,
                 columns: [
-                  { text: 'Partei', datafield: 'partei_name', width: 100 },
-		  { text: 'Land', datafield: 'land_name', width: 100 },
+                  { text: 'Partei', datafield: 'partei_name', width: 180 },
+		  { text: 'Land', datafield: 'land_name', width: 250 },
 		  { text: 'Anzahl', datafield: 'anzahl', width: 100 }
 				    
                 ]
             });
         });
+		
+		$("#jqxgrid").bind('bindingcomplete', function()
+		{
+		$("#jqxgrid").jqxGrid('sortby', 'partei_name', 'asc');
+		});
     </script>
 
     <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">

@@ -35,10 +35,10 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 source: dataAdapter,
 				sortable: true,
                 columns: [
-                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
-                  { text: 'Partei', datafield: 'partei_name', width: 100 },
-				  { text: 'Nachname', datafield: 'nachname', width: 150 },
-				  { text: 'Vorname', datafield: 'vorname', width: 100 }
+                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 250 },
+                  { text: 'Partei', datafield: 'partei_name', width: 180 },
+				  { text: 'Nachname', datafield: 'nachname', width: 200 },
+				  { text: 'Vorname', datafield: 'vorname', width: 120 }
 				    
                 ]
             });
@@ -47,7 +47,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 		
 		$("#jqxgrid").bind('bindingcomplete', function()
 		{
-		$("#jqxgrid").jqxGrid('sortby', 'nachname', 'asc');
+		$("#jqxgrid").jqxGrid('sortby', 'wahlkreis', 'asc');
 		});
     </script>
 

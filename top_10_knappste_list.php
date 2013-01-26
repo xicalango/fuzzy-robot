@@ -65,10 +65,10 @@ var dataAdapter = new $.jqx.dataAdapter(source);
                 source: dataAdapter,
 				sortable: true,
                 columns: [
-                  { text: 'Vorname', datafield: 'vorname', width: 100 },
-                  { text: 'Nachname', datafield: 'nachname', width: 100 },
-				  { text: 'Partei', datafield: 'partei_name', width: 50 },
-				  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 120},
+                  { text: 'Vorname', datafield: 'vorname', width: 120 },
+                  { text: 'Nachname', datafield: 'nachname', width: 200 },
+				  { text: 'Partei', datafield: 'partei_name', width: 180 },
+				  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 250},
 				   { text: 'Differenz', datafield: 'differenz', width: 100 }
                 ]
             });
