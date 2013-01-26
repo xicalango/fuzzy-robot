@@ -1,4 +1,5 @@
-    <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
+
+	<link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxbuttons.js"></script>
@@ -17,10 +18,11 @@
 			{
 				 datatype: "json",
 				 datafields: [
-					 { name: 'wahlkreis'},
-					 { name: 'partei_name'}
+					 { name: 'partei_name'},
+					 { name: 'land_name'},
+					 { name: 'anzahl'}
 				],
-				url: 'adapters/wahlkreissieger_partei_zweitstimme.php'
+				url: 'adapters/ueberhangmandate.php'
 			};
 
 
@@ -31,8 +33,10 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             {
                 source: dataAdapter,
                 columns: [
-                  { text: 'Wahlkreis', datafield: 'wahlkreis', width: 180 },
-                  { text: 'Partei', datafield: 'partei_name', width: 100 }
+                  { text: 'Partei', datafield: 'partei_name', width: 100 },
+		  { text: 'Land', datafield: 'land_name', width: 100 },
+		  { text: 'Anzahl', datafield: 'anzahl', width: 100 }
+				    
                 ]
             });
         });
@@ -41,3 +45,4 @@ var dataAdapter = new $.jqx.dataAdapter(source);
     <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
         <div id="jqxgrid"></div>
     </div>
+

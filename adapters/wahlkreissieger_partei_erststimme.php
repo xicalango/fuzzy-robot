@@ -3,6 +3,6 @@
 @include("data_adapter.php");
 
 $da = new DataAdapter();
-$da->evalQueryToJSON( "SELECT * FROM wahlkreissieger_partei_erststimme");
+$da->evalQueryToJSON( "SELECT * FROM adapter.wahlkreissieger_partei_erststimme");
 
 ?>

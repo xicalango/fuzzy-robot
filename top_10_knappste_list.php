@@ -1,7 +1,26 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-   <title id='Description'>Tabellarische Übersicht über die 10 knappsten Sieger einer Partei</title>
+<?php
+
+@include("adapters/data_adapter.php");
+
+$da = new DataAdapter();
+$parteien = $da->queryToArray("SELECT id, name as text FROM partei order by name" );
+
+$partei_id = !empty($_GET['parteiid']) ? (int)$_GET['parteiid'] : 0;
+
+?>
+<select size="1" onchange="setAjaxContent('<?=basename(__FILE__);?>?parteiid='+$(this).val());">
+	<option value="">- Partei -</option>
+	<?foreach($parteien as $k => $v){?>
+		<option value="<?=$v['id'];?>"<?php if($partei_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
+	<?}?>
+</select>
+
+<div>&nbsp;</div>
+
+<?php
+if(!empty($_GET['parteiid'])){
+?>
+
     <link rel="stylesheet" href="lib/jqwidgets/styles/jqx.base.css" type="text/css" />
     <script type="text/javascript" src="lib/scripts/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxcore.js"></script>
@@ -64,10 +83,11 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 		
 		
     </script>
-</head>
-<body class='default'>
+
     <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
         <div id="jqxgrid"></div>
     </div>
-</body>
-</html>
+
+<?php
+}
+?>
