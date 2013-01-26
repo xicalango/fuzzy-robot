@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="lib/jqwidgets/jqxscrollbar.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxmenu.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.js"></script>
+	<script type="text/javascript" src="lib/jqwidgets/jqxgrid.sort.js"></script>
     <script type="text/javascript" src="lib/jqwidgets/jqxgrid.selection.js"></script>
 	<script type="text/javascript">
         $(document).ready(function () {
