@@ -117,8 +117,7 @@ select {
 				<li><a href="stimmen_wahlkreis_diagramm.php">Wahlkreisübersicht</a></li>
 				<li><a href="wahlkreissieger_erststimme_list.php">Wahlkreissieger Erststimme</a></li>
 				<li><a href="wahlkreissieger_zweitstimme_list.php">Wahlkreissieger Zweitstimme</a></li>
-				<li><a href="#">Aggr. Wahlkreisübersicht</a></li>
-				<li><a href="#">Aggr. Wahlkreissieger</a></li>
+				<li><a href="stimmen_wahlkreis_diagramm_q7.php">Aggr. Wahlkreisübersicht</a></li>
 			</ul>
 		</li>
 		<li><a href="top_10_knappste_list.php">Knappste Sieger</a></li>

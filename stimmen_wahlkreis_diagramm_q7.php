@@ -3,13 +3,13 @@
 @include("adapters/data_adapter.php");
 
 $da = new DataAdapter();
-$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009' order by name");
+$bundeslaender = $da->queryToArray("SELECT id, '-1' as parentid, name as text FROM land WHERE jahr='2009' AND name='Bayern' order by name");
 
 $bundesland_id = !empty($_GET['bundeslandid']) ? (int)$_GET['bundeslandid'] : 0;
 $wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;
 
 ?>
-<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid='+$(this).val());">
+<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm_q7.php?bundeslandid='+$(this).val());">
 	<option value="">- Bundesland -</option>
 	<?foreach($bundeslaender as $k => $v){?>
 		<option value="<?=$v['id'];?>"<?php if($bundesland_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
@@ -18,10 +18,10 @@ $wahlkreis_id = !empty($_GET['wahlkreisid']) ? (int)$_GET['wahlkreisid'] : 0;
 <?if(!empty($bundesland_id)){
 
 	$da = new DataAdapter();
-	$wahlkreise = $da->queryToArray( "SELECT id, land_id as parentid, name as text FROM wahlkreis WHERE land_id=".$bundesland_id );
+	$wahlkreise = $da->queryToArray( "SELECT id, land_id as parentid, name as text FROM wahlkreis WHERE land_id=".$bundesland_id." AND nummer BETWEEN 213 AND 217" );
 
 	?>
-	<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm.php?bundeslandid=<?=$bundesland_id;?>&wahlkreisid='+$(this).val());">
+	<select size="1" onchange="setAjaxContent('stimmen_wahlkreis_diagramm_q7.php?bundeslandid=<?=$bundesland_id;?>&wahlkreisid='+$(this).val());">
 		<option value="">- Wahlkreis -</option>
 		<?foreach($wahlkreise as $k => $v){?>
 			<option value="<?=$v['id'];?>"<?php if($wahlkreis_id == $v['id']) echo ' selected="selected"';?>><?=$v['text'];?></option>
@@ -66,7 +66,8 @@ if(!empty($_GET['wahlkreisid'])){
 			categoryAxis:
 			    {
 				dataField: settings.categoryField,
-				showGridLines: true
+				showGridLines: true,
+                unitInterval: 1
 			    },
 			colorScheme: 'scheme05',
 			seriesGroups: 
@@ -102,7 +103,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'stimmen', type: 'number'}
 				],
-				url: 'adapters/erststimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/erststimme_absolut_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 
@@ -160,7 +161,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
-				url: 'adapters/erststimme_prozent_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/erststimme_prozent_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 		   var dataAdapter_p = new $.jqx.dataAdapter(source_p,
@@ -215,7 +216,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
-				url: 'adapters/erststimme_differenz_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/erststimme_differenz_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 		   var dataAdapter_d = new $.jqx.dataAdapter(source_d,
@@ -271,7 +272,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'stimmen', type: 'number'}
 				],
-				url: 'adapters/zweitstimme_absolut_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/zweitstimme_absolut_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 		   var dataAdapter_z = new $.jqx.dataAdapter(source_z,
@@ -328,7 +329,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
-				url: 'adapters/zweitstimme_prozent_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/zweitstimme_prozent_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 		   var dataAdapter_zp = new $.jqx.dataAdapter(source_zp,
@@ -382,7 +383,7 @@ if(!empty($_GET['wahlkreisid'])){
 					 { name: 'partei_name'},
 					 { name: 'prozent', type: 'number'}
 				],
-				url: 'adapters/zweitstimme_differenz_wahlkreis.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
+				url: 'adapters/zweitstimme_differenz_wahlkreis_q7.php?wahlkreisid=<?=$_GET['wahlkreisid']?>'
 			};
 
 		   var dataAdapter_zd = new $.jqx.dataAdapter(source_zd,
@@ -430,7 +431,7 @@ if(!empty($_GET['wahlkreisid'])){
             $('#jqxChartZD').jqxChart(settings_zd);
 
 
-	$.get('adapters/wahlkreis_info.php?wahlkreisid=<?=$_GET["wahlkreisid"]?>', function(data) {
+	$.get('adapters/wahlkreis_info_q7.php?wahlkreisid=<?=$_GET["wahlkreisid"]?>', function(data) {
 
 		
 		var candidat = data.direktkandidat;
