@@ -33,12 +33,13 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             $("#jqxgrid").jqxGrid(
             {
                 source: dataAdapter,
+                width: '100%',
 				sortable: true,
                 columns: [
                   { text: 'Partei', datafield: 'partei_name', width: 100 },
-		  { text: 'Land', datafield: 'land_name', width: 250 },
-		  { text: 'Anzahl', datafield: 'anzahl', width: 100 }
-				    
+				  { text: 'Land', datafield: 'land_name', width: 250 },
+				  { text: 'Anzahl', datafield: 'anzahl', width: 100 }
+					    
                 ]
             });
         });
@@ -49,7 +50,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 		});
     </script>
 
-    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
+    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left; width: 450px;">
         <div id="jqxgrid"></div>
     </div>
 

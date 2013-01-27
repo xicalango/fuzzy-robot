@@ -33,6 +33,7 @@ var dataAdapter = new $.jqx.dataAdapter(source);
             $("#jqxgrid").jqxGrid(
             {
                 source: dataAdapter,
+                width: '100%',
 				sortable: true,
                 columns: [
                   { text: 'Wahlkreis', datafield: 'wahlkreis', width: 250 },
@@ -51,6 +52,6 @@ var dataAdapter = new $.jqx.dataAdapter(source);
 		});
     </script>
 
-    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left;">
+    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: left; width: 690px;">
         <div id="jqxgrid"></div>
     </div>
