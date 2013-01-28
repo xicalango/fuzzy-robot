@@ -3,8 +3,8 @@
 --
 
 -- Dumped from database version 9.1.7
--- Dumped by pg_dump version 9.1.6
--- Started on 2013-01-09 12:21:05 CET
+-- Dumped by pg_dump version 9.2.1
+-- Started on 2013-01-28 13:53:00
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -61,7 +61,7 @@ CREATE SCHEMA stimmen2009;
 
 
 --
--- TOC entry 270 (class 3079 OID 11645)
+-- TOC entry 279 (class 3079 OID 11645)
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -69,19 +69,35 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
 --
--- TOC entry 2429 (class 0 OID 0)
--- Dependencies: 270
+-- TOC entry 2520 (class 0 OID 0)
+-- Dependencies: 279
 -- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- TOC entry 280 (class 3079 OID 59501)
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- TOC entry 2521 (class 0 OID 0)
+-- Dependencies: 280
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
+
+
 SET search_path = adapter, pg_catalog;
 
 --
--- TOC entry 783 (class 1247 OID 59345)
--- Dependencies: 14 260
+-- TOC entry 825 (class 1247 OID 59345)
 -- Name: type_direktkandidat_gewinner; Type: TYPE; Schema: adapter; Owner: -
 --
 
@@ -93,8 +109,7 @@ CREATE TYPE type_direktkandidat_gewinner AS (
 
 
 --
--- TOC entry 888 (class 1247 OID 59426)
--- Dependencies: 14 269
+-- TOC entry 930 (class 1247 OID 59426)
 -- Name: type_sitzverteilung_prozent_parteiname; Type: TYPE; Schema: adapter; Owner: -
 --
 
@@ -105,8 +120,7 @@ CREATE TYPE type_sitzverteilung_prozent_parteiname AS (
 
 
 --
--- TOC entry 780 (class 1247 OID 59423)
--- Dependencies: 14 268
+-- TOC entry 822 (class 1247 OID 59423)
 -- Name: type_sitzverteilung_sitze_parteiname; Type: TYPE; Schema: adapter; Owner: -
 --
 
@@ -119,8 +133,7 @@ CREATE TYPE type_sitzverteilung_sitze_parteiname AS (
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 903 (class 1247 OID 59250)
--- Dependencies: 5
+-- TOC entry 957 (class 1247 OID 59250)
 -- Name: gewinner_typ; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -131,8 +144,7 @@ CREATE TYPE gewinner_typ AS ENUM (
 
 
 --
--- TOC entry 879 (class 1247 OID 59359)
--- Dependencies: 5 261
+-- TOC entry 921 (class 1247 OID 59359)
 -- Name: type_direktkandidat_diff; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -146,8 +158,22 @@ CREATE TYPE type_direktkandidat_diff AS (
 
 
 --
--- TOC entry 767 (class 1247 OID 59228)
--- Dependencies: 5 248
+-- TOC entry 671 (class 1247 OID 59533)
+-- Name: type_direktkandidat_differenz; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE type_direktkandidat_differenz AS (
+	vorname character varying,
+	nachname character varying,
+	wahlkreis character varying,
+	partei_name character varying,
+	differenz bigint,
+	partei_id bigint
+);
+
+
+--
+-- TOC entry 809 (class 1247 OID 59228)
 -- Name: type_land_stimmen; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -158,8 +184,7 @@ CREATE TYPE type_land_stimmen AS (
 
 
 --
--- TOC entry 900 (class 1247 OID 59237)
--- Dependencies: 5 250
+-- TOC entry 954 (class 1247 OID 59237)
 -- Name: type_partei_land_stimmen; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -173,8 +198,7 @@ CREATE TYPE type_partei_land_stimmen AS (
 SET search_path = adapter, pg_catalog;
 
 --
--- TOC entry 317 (class 1255 OID 59427)
--- Dependencies: 14 780
+-- TOC entry 348 (class 1255 OID 59427)
 -- Name: absolute_erststimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -186,21 +210,47 @@ $_$;
 
 
 --
--- TOC entry 319 (class 1255 OID 59428)
--- Dependencies: 14 780
+-- TOC entry 337 (class 1255 OID 59477)
+-- Name: absolute_erststimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION absolute_erststimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_sitze_parteiname
+    LANGUAGE sql
+    AS $_$
+SELECT p.name, sum(ea.stimmen)::bigint from partei p, erststimmen_aggregation_q7 ea, direktkandidat dk where p.id = dk.partei_id and ea.direktkandidat_id = dk.id and ea.wahlkreis_id = $1 group by p.id, p.name;
+$_$;
+
+
+--
+-- TOC entry 350 (class 1255 OID 59428)
 -- Name: absolute_zweitstimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
 CREATE FUNCTION absolute_zweitstimmen_by_wahlkreis(integer) RETURNS SETOF type_sitzverteilung_sitze_parteiname
     LANGUAGE sql
     AS $_$
-SELECT p.name, sum(za.stimmen)::bigint from partei p, zweitstimmen_aggregation za where p.id = za.partei_id and za.wahlkreis_id = $1 group by p.id, p.name;
+SELECT p.name, sum(za.stimmen)::bigint from partei p, zweitstimmen_aggregation za 
+where p.id != 1 and --exclude übrige
+p.id = za.partei_id and za.wahlkreis_id = $1 group by p.id, p.name;
 $_$;
 
 
 --
--- TOC entry 321 (class 1255 OID 59429)
--- Dependencies: 14 888
+-- TOC entry 341 (class 1255 OID 59478)
+-- Name: absolute_zweitstimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION absolute_zweitstimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_sitze_parteiname
+    LANGUAGE sql
+    AS $_$
+SELECT p.name, sum(za.stimmen)::bigint from partei p, zweitstimmen_aggregation_q7 za 
+where p.id != 1 --exclude Übrige
+and p.id = za.partei_id and za.wahlkreis_id = $1 group by p.id, p.name;
+$_$;
+
+
+--
+-- TOC entry 351 (class 1255 OID 59429)
 -- Name: differenz_erststimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -228,8 +278,35 @@ $_$;
 
 
 --
--- TOC entry 322 (class 1255 OID 59430)
--- Dependencies: 14 888
+-- TOC entry 343 (class 1255 OID 59479)
+-- Name: differenz_erststimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION differenz_erststimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_prozent_parteiname
+    LANGUAGE sql
+    AS $_$
+with stimmen as (
+	SELECT d.partei_id, sum(ea.stimmen) stimmen, sum(ea.stimmen_vorperiode) stimmen_vorperiode
+	FROM erststimmen_aggregation_q7 ea, direktkandidat d
+	WHERE ea.direktkandidat_id = d.id
+	AND ea.wahlkreis_id = $1
+	GROUP BY d.partei_id
+), gesamtstimmen as (
+	select sum(stimmen) sum_stimmen, sum(stimmen_vorperiode) sum_stimmen_vorperiode	
+	from erststimmen_aggregation_q7 ea 
+	where ea.wahlkreis_id = $1 
+	and ea.direktkandidat_id is not null
+)
+SELECT p.name,((100*s.stimmen::numeric/gs.sum_stimmen::numeric) -  (100*s.stimmen_vorperiode::numeric/gs.sum_stimmen_vorperiode::numeric))::numeric(3,1) differenz
+FROM stimmen s, gesamtstimmen gs, partei p
+WHERE s.partei_id = p.id
+ORDER BY s.stimmen DESC;
+
+$_$;
+
+
+--
+-- TOC entry 352 (class 1255 OID 59430)
 -- Name: differenz_zweitstimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -240,10 +317,40 @@ with stimmen as (
 	SELECT za.partei_id, sum(za.stimmen) stimmen, sum(za.stimmen_vorperiode) stimmen_vorperiode
 	FROM zweitstimmen_aggregation za
 	WHERE za.wahlkreis_id = $1
+	AND za.partei_id != 1 --Übrige ausschließen, da 2009er werte nicht vorliegen
 	GROUP BY za.partei_id
 ), gesamtstimmen as (
 	select sum(stimmen) sum_stimmen, sum(stimmen_vorperiode) sum_stimmen_vorperiode	
 	from zweitstimmen_aggregation za 
+	where za.wahlkreis_id = $1 
+	and za.partei_id is not null
+	-- Übrige einschließen, da notwendig für summe der stimmen der vorperiode
+)
+SELECT p.name,((100*s.stimmen::numeric/gs.sum_stimmen::numeric) -  (100*s.stimmen_vorperiode::numeric/gs.sum_stimmen_vorperiode::numeric))::numeric(3,1) differenz
+FROM stimmen s, gesamtstimmen gs, partei p
+WHERE s.partei_id = p.id
+ORDER BY s.stimmen DESC;
+
+$_$;
+
+
+--
+-- TOC entry 346 (class 1255 OID 59480)
+-- Name: differenz_zweitstimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION differenz_zweitstimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_prozent_parteiname
+    LANGUAGE sql
+    AS $_$
+with stimmen as (
+	SELECT za.partei_id, sum(za.stimmen) stimmen, sum(za.stimmen_vorperiode) stimmen_vorperiode
+	FROM zweitstimmen_aggregation_q7 za
+	WHERE za.wahlkreis_id = $1
+	AND za.partei_id != 0
+	GROUP BY za.partei_id
+), gesamtstimmen as (
+	select sum(stimmen) sum_stimmen, sum(stimmen_vorperiode) sum_stimmen_vorperiode	
+	from zweitstimmen_aggregation_q7 za 
 	where za.wahlkreis_id = $1 
 	and za.partei_id is not null
 )
@@ -263,7 +370,6 @@ SET default_with_oids = false;
 
 --
 -- TOC entry 169 (class 1259 OID 16396)
--- Dependencies: 5
 -- Name: direktkandidat; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -279,8 +385,7 @@ CREATE TABLE direktkandidat (
 SET search_path = adapter, pg_catalog;
 
 --
--- TOC entry 315 (class 1255 OID 59398)
--- Dependencies: 711 14
+-- TOC entry 345 (class 1255 OID 59398)
 -- Name: gewaehlte_direktkandidaten_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -292,8 +397,7 @@ $_$;
 
 
 --
--- TOC entry 307 (class 1255 OID 59346)
--- Dependencies: 14 783
+-- TOC entry 336 (class 1255 OID 59346)
 -- Name: gewaehlter_direktkandidat_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -301,18 +405,31 @@ CREATE FUNCTION gewaehlter_direktkandidat_by_wahlkreis(integer) RETURNS SETOF ty
     LANGUAGE sql
     AS $_$
 SELECT dk.vorname, dk.nachname, p.name 
-FROM direktkandidat dk, wahl_gewinner wg, partei p
-WHERE dk.id = wg.kandidat_id 
+FROM direktkandidat dk, direktkandidat_gewinner_land_partei dg, partei p
+WHERE dk.id = dg.kandidat_id 
 AND dk.wahlkreis_id = $1 
-AND wg.typ = 'Direktkandidat' 
-AND dk.id = wg.kandidat_id
 AND p.id = dk.partei_id;
 $_$;
 
 
 --
--- TOC entry 324 (class 1255 OID 59431)
--- Dependencies: 888 14
+-- TOC entry 330 (class 1255 OID 59550)
+-- Name: gewaehlter_direktkandidat_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION gewaehlter_direktkandidat_by_wahlkreis_q7(integer) RETURNS SETOF type_direktkandidat_gewinner
+    LANGUAGE sql
+    AS $_$
+SELECT dk.vorname, dk.nachname, p.name 
+FROM direktkandidat dk, direktkandidat_gewinner_land_partei_q7 dg, partei p
+WHERE dk.id = dg.kandidat_id 
+AND dk.wahlkreis_id = $1 
+AND p.id = dk.partei_id;
+$_$;
+
+
+--
+-- TOC entry 354 (class 1255 OID 59431)
 -- Name: prozent_erststimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -328,8 +445,23 @@ $_$;
 
 
 --
--- TOC entry 326 (class 1255 OID 59432)
--- Dependencies: 888 14
+-- TOC entry 347 (class 1255 OID 59481)
+-- Name: prozent_erststimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION prozent_erststimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_prozent_parteiname
+    LANGUAGE sql
+    AS $_$
+with gesamtstimmen as (
+select sum(stimmen) from erststimmen_aggregation_q7 ea where ea.wahlkreis_id = $1 and ea.direktkandidat_id is not null
+)
+select p.name, 100 * sum(ea.stimmen) / sum(gs.sum) as prozent from erststimmen_aggregation_q7 ea, gesamtstimmen gs, partei p, direktkandidat dk
+where dk.partei_id = p.id and dk.id = ea.direktkandidat_id and ea.wahlkreis_id = $1 group by p.name;
+$_$;
+
+
+--
+-- TOC entry 356 (class 1255 OID 59432)
 -- Name: prozent_zweitstimmen_by_wahlkreis(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
@@ -340,17 +472,32 @@ with gesamtstimmen as (
 select sum(stimmen) from zweitstimmen_aggregation a where a.wahlkreis_id = $1 and a.partei_id is not Null
 )
 select p.name, 100 * sum(za.stimmen) / sum(gs.sum) as prozent from zweitstimmen_aggregation za, gesamtstimmen gs, partei p
-where p.id = za.partei_id and za.wahlkreis_id = $1 group by p.name;
+where p.id = za.partei_id and za.partei_id != 1 and za.wahlkreis_id = $1 group by p.name;
 $_$;
 
 
 --
--- TOC entry 316 (class 1255 OID 59408)
--- Dependencies: 930 14 879
+-- TOC entry 349 (class 1255 OID 59482)
+-- Name: prozent_zweitstimmen_by_wahlkreis_q7(integer); Type: FUNCTION; Schema: adapter; Owner: -
+--
+
+CREATE FUNCTION prozent_zweitstimmen_by_wahlkreis_q7(integer) RETURNS SETOF type_sitzverteilung_prozent_parteiname
+    LANGUAGE sql
+    AS $_$
+with gesamtstimmen as (
+select sum(stimmen) from zweitstimmen_aggregation_q7 a where a.wahlkreis_id = $1 and a.partei_id is not Null
+)
+select p.name, 100 * sum(za.stimmen) / sum(gs.sum) as prozent from zweitstimmen_aggregation_q7 za, gesamtstimmen gs, partei p
+where p.id = za.partei_id and za.partei_id != 1 and za.wahlkreis_id = $1 group by p.name;
+$_$;
+
+
+--
+-- TOC entry 340 (class 1255 OID 59540)
 -- Name: top_10(integer); Type: FUNCTION; Schema: adapter; Owner: -
 --
 
-CREATE FUNCTION top_10(integer) RETURNS SETOF public.type_direktkandidat_diff
+CREATE FUNCTION top_10(integer) RETURNS SETOF public.type_direktkandidat_differenz
     LANGUAGE plpgsql
     AS $_$
 
@@ -375,8 +522,7 @@ $_$;
 SET search_path = alt, pg_catalog;
 
 --
--- TOC entry 305 (class 1255 OID 59195)
--- Dependencies: 11 930
+-- TOC entry 316 (class 1255 OID 59195)
 -- Name: sitze_partei_bundesland(integer); Type: FUNCTION; Schema: alt; Owner: -
 --
 
@@ -397,8 +543,7 @@ $_$;
 
 
 --
--- TOC entry 262 (class 1259 OID 59363)
--- Dependencies: 2343 11
+-- TOC entry 259 (class 1259 OID 59363)
 -- Name: type_sitzverteilung; Type: VIEW; Schema: alt; Owner: -
 --
 
@@ -407,8 +552,7 @@ CREATE VIEW type_sitzverteilung AS
 
 
 --
--- TOC entry 323 (class 1255 OID 59367)
--- Dependencies: 921 11
+-- TOC entry 353 (class 1255 OID 59367)
 -- Name: sitze_partei_ein_land(integer); Type: FUNCTION; Schema: alt; Owner: -
 --
 
@@ -435,8 +579,7 @@ $_$;
 
 
 --
--- TOC entry 325 (class 1255 OID 59368)
--- Dependencies: 11 921
+-- TOC entry 355 (class 1255 OID 59368)
 -- Name: sitze_partei_ein_land_(integer); Type: FUNCTION; Schema: alt; Owner: -
 --
 
@@ -467,8 +610,7 @@ $_$;
 
 
 --
--- TOC entry 327 (class 1255 OID 59369)
--- Dependencies: 930 11 921
+-- TOC entry 357 (class 1255 OID 59369)
 -- Name: sitze_partei_ein_land__(integer); Type: FUNCTION; Schema: alt; Owner: -
 --
 
@@ -513,8 +655,29 @@ $$;
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 297 (class 1255 OID 25113)
--- Dependencies: 5 930
+-- TOC entry 334 (class 1255 OID 59522)
+-- Name: check_uuid(uuid, integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION check_uuid(id uuid, year integer) RETURNS boolean
+    LANGUAGE sql
+    AS $_$
+SELECT v FROM (
+(
+SELECT 1 id, true v FROM berechtigten_uuid WHERE id = $1 AND jahr = $2 AND used = false
+)
+UNION ALL
+(
+SELECT 2 id, false v
+)
+) a
+ORDER BY id
+LIMIT 1;
+$_$;
+
+
+--
+-- TOC entry 307 (class 1255 OID 25113)
 -- Name: create_uebrige_direktkandidaten(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -535,19 +698,18 @@ $$;
 
 
 --
--- TOC entry 318 (class 1255 OID 59360)
--- Dependencies: 879 5
+-- TOC entry 329 (class 1255 OID 59537)
 -- Name: get_10_knappste_sieger(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION get_10_knappste_sieger(integer) RETURNS SETOF type_direktkandidat_diff
+CREATE FUNCTION get_10_knappste_sieger(integer) RETURNS SETOF type_direktkandidat_differenz
     LANGUAGE sql
     AS $_$
 
-select vorname, nachname, wahlkreis, partei_name, diff from(
+select vorname, nachname, wahlkreis, partei_name, diff, id from(
 
 -- Pateien, die Direktkandidatenmandat gewonnen haben
-select dk.vorname, dk.nachname, wk.name as wahlkreis, p.name as partei_name, dd.diff 
+select dk.vorname, dk.nachname, wk.name as wahlkreis, p.name as partei_name, dd.diff, p.id :: bigint
 from direktkandidat dk, direktkandidat_differenz_auf_zweiten dd, partei p, wahlkreis wk 
 where dk.partei_id = p.id and dd.kandidat_id = dk.id 
 and dk.partei_id = $1 and diff>0 and wk.id = dk.wahlkreis_id
@@ -562,19 +724,18 @@ $_$;
 
 
 --
--- TOC entry 320 (class 1255 OID 59361)
--- Dependencies: 5 879
+-- TOC entry 333 (class 1255 OID 59539)
 -- Name: get_10_knappste_verlierer(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
-CREATE FUNCTION get_10_knappste_verlierer(integer) RETURNS SETOF type_direktkandidat_diff
+CREATE FUNCTION get_10_knappste_verlierer(integer) RETURNS SETOF type_direktkandidat_differenz
     LANGUAGE sql
     AS $_$
 
-select vorname, nachname, wahlkreis, partei_name, diff from(
+select vorname, nachname, wahlkreis, partei_name, diff, id from(
 
 -- Pateien, die Direktkandidatenmandat gewonnen haben
-select dk.vorname, dk.nachname, wk.name as wahlkreis, p.name as partei_name, dd.diff 
+select dk.vorname, dk.nachname, wk.name as wahlkreis, p.name as partei_name, dd.diff, p.id :: bigint
 from direktkandidat dk, direktkandidat_differenz_auf_ersten dd, partei p, wahlkreis wk 
 where dk.partei_id = p.id and dd.kandidat_id = dk.id and dk.partei_id = $1 and diff<0 and dk.wahlkreis_id = wk.id
 
@@ -588,8 +749,7 @@ $_$;
 
 
 --
--- TOC entry 284 (class 1255 OID 16388)
--- Dependencies: 5
+-- TOC entry 294 (class 1255 OID 16388)
 -- Name: get_bundesland_id_by_name(character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -599,8 +759,7 @@ CREATE FUNCTION get_bundesland_id_by_name(bundesland_name character varying, jah
 
 
 --
--- TOC entry 303 (class 1255 OID 24952)
--- Dependencies: 711 5
+-- TOC entry 313 (class 1255 OID 24952)
 -- Name: get_direktkandidat_by_wahlkreis_partei_jahr(character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -615,8 +774,7 @@ $_$;
 
 
 --
--- TOC entry 308 (class 1255 OID 24980)
--- Dependencies: 5
+-- TOC entry 331 (class 1255 OID 24980)
 -- Name: get_direktkandidat_id_by_wahlkreis_partei_jahr(character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -632,7 +790,6 @@ $_$;
 
 --
 -- TOC entry 174 (class 1259 OID 16409)
--- Dependencies: 5
 -- Name: land; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -644,8 +801,7 @@ CREATE TABLE land (
 
 
 --
--- TOC entry 295 (class 1255 OID 16717)
--- Dependencies: 646 5
+-- TOC entry 305 (class 1255 OID 16717)
 -- Name: get_laender_by_jahr(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -657,7 +813,6 @@ SELECT * FROM "land" WHERE jahr = $1;$_$;
 
 --
 -- TOC entry 178 (class 1259 OID 16419)
--- Dependencies: 5
 -- Name: landesliste; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -670,8 +825,7 @@ CREATE TABLE landesliste (
 
 
 --
--- TOC entry 329 (class 1255 OID 16668)
--- Dependencies: 5 653
+-- TOC entry 359 (class 1255 OID 16668)
 -- Name: get_landesliste_by_jahr(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -681,8 +835,7 @@ CREATE FUNCTION get_landesliste_by_jahr(integer) RETURNS SETOF landesliste
 
 
 --
--- TOC entry 302 (class 1255 OID 25137)
--- Dependencies: 5
+-- TOC entry 312 (class 1255 OID 25137)
 -- Name: get_landesliste_id_by_wahlkreis_partei_jahr(character varying, character varying, integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -697,8 +850,7 @@ $_$;
 
 
 --
--- TOC entry 287 (class 1255 OID 16389)
--- Dependencies: 5
+-- TOC entry 297 (class 1255 OID 16389)
 -- Name: get_partei_id_by_name(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -708,8 +860,17 @@ CREATE FUNCTION get_partei_id_by_name(partei_name character varying) RETURNS int
 
 
 --
+-- TOC entry 328 (class 1255 OID 59521)
+-- Name: get_unused_uuid(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION get_unused_uuid(year integer) RETURNS uuid
+    LANGUAGE sql
+    AS $_$SELECT id as "uuid" FROM berechtigten_uuid WHERE used = 'f' AND jahr = $1 ORDER BY RANDOM() LIMIT 1$_$;
+
+
+--
 -- TOC entry 182 (class 1259 OID 16434)
--- Dependencies: 5
 -- Name: wahlkreis; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -723,8 +884,7 @@ CREATE TABLE wahlkreis (
 
 
 --
--- TOC entry 285 (class 1255 OID 16642)
--- Dependencies: 5 661
+-- TOC entry 295 (class 1255 OID 16642)
 -- Name: get_wahlkreis_by_jahr(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -735,8 +895,7 @@ SELECT * FROM "wahlkreis" WHERE land_id IN (SELECT id FROM "land" WHERE jahr = $
 
 
 --
--- TOC entry 301 (class 1255 OID 24950)
--- Dependencies: 5 661
+-- TOC entry 311 (class 1255 OID 24950)
 -- Name: get_wahlkreis_by_jahr_and_name(integer, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -751,8 +910,7 @@ $_$;
 
 
 --
--- TOC entry 311 (class 1255 OID 25000)
--- Dependencies: 5
+-- TOC entry 338 (class 1255 OID 25000)
 -- Name: get_wahlkreis_id_by_jahr_and_name(integer, character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -767,8 +925,7 @@ $_$;
 
 
 --
--- TOC entry 309 (class 1255 OID 42662)
--- Dependencies: 5 711
+-- TOC entry 332 (class 1255 OID 42662)
 -- Name: gewaehlte_direktkandidaten(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -780,8 +937,7 @@ $_$;
 
 
 --
--- TOC entry 298 (class 1255 OID 16722)
--- Dependencies: 5
+-- TOC entry 308 (class 1255 OID 16722)
 -- Name: initialize_db(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -816,21 +972,20 @@ $$;
 
 --
 -- TOC entry 223 (class 1259 OID 41663)
--- Dependencies: 5
 -- Name: erststimmen_aggregation; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE erststimmen_aggregation (
-    direktkandidat_id integer NOT NULL,
+    direktkandidat_id integer,
     wahlkreis_id integer NOT NULL,
     stimmen bigint,
-    stimmen_vorperiode bigint
+    stimmen_vorperiode bigint,
+    id integer NOT NULL
 );
 
 
 --
 -- TOC entry 220 (class 1259 OID 33451)
--- Dependencies: 2311 5
 -- Name: direktkandidat_gewinner; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -840,7 +995,6 @@ CREATE VIEW direktkandidat_gewinner AS
 
 --
 -- TOC entry 176 (class 1259 OID 16414)
--- Dependencies: 5
 -- Name: landeskandidat; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -854,8 +1008,7 @@ CREATE TABLE landeskandidat (
 
 
 --
--- TOC entry 255 (class 1259 OID 59282)
--- Dependencies: 2338 5
+-- TOC entry 252 (class 1259 OID 59282)
 -- Name: landeskandidat_ohne_direktmandat; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -864,8 +1017,7 @@ CREATE VIEW landeskandidat_ohne_direktmandat AS
 
 
 --
--- TOC entry 314 (class 1255 OID 59299)
--- Dependencies: 5 930 909
+-- TOC entry 344 (class 1255 OID 59299)
 -- Name: landeskandidat_ohne_direktmandat_bereinigt(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -896,8 +1048,27 @@ $$;
 
 
 --
--- TOC entry 296 (class 1255 OID 16583)
--- Dependencies: 5 930
+-- TOC entry 327 (class 1255 OID 59518)
+-- Name: regenerate_uuids(integer); Type: FUNCTION; Schema: public; Owner: -
+--
+
+CREATE FUNCTION regenerate_uuids(jahr integer) RETURNS void
+    LANGUAGE sql
+    AS $_$
+
+	DELETE FROM berechtigten_uuid WHERE jahr = $1;
+
+	WITH berechtigten_count AS
+	(
+		SELECT sum(wahlberechtigte) c FROM get_wahlkreis_by_jahr($1)
+	)
+	INSERT INTO berechtigten_uuid (id, jahr) SELECT uuid_generate_v4(), $1 FROM generate_series(1, (SELECT c from berechtigten_count)); 
+	
+$_$;
+
+
+--
+-- TOC entry 306 (class 1255 OID 16583)
 -- Name: reset_db(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -933,8 +1104,7 @@ $$;
 
 
 --
--- TOC entry 300 (class 1255 OID 25198)
--- Dependencies: 5 930
+-- TOC entry 310 (class 1255 OID 25198)
 -- Name: scherper_faktoren(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -956,8 +1126,7 @@ $$;
 
 
 --
--- TOC entry 304 (class 1255 OID 41812)
--- Dependencies: 5
+-- TOC entry 314 (class 1255 OID 41812)
 -- Name: scherper_land(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -983,8 +1152,7 @@ $_$;
 
 
 --
--- TOC entry 313 (class 1255 OID 59239)
--- Dependencies: 5 900 930
+-- TOC entry 342 (class 1255 OID 59239)
 -- Name: sitze_alle_parteien_bundesland(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1008,8 +1176,7 @@ $$;
 
 
 --
--- TOC entry 312 (class 1255 OID 59238)
--- Dependencies: 900 5
+-- TOC entry 339 (class 1255 OID 59238)
 -- Name: sitze_partei_bundesland(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1028,8 +1195,7 @@ $_$;
 
 
 --
--- TOC entry 310 (class 1255 OID 59234)
--- Dependencies: 5 767
+-- TOC entry 335 (class 1255 OID 59234)
 -- Name: stimmen_land_eine_partei(integer); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -1043,8 +1209,7 @@ $_$;
 SET search_path = raw2005, pg_catalog;
 
 --
--- TOC entry 283 (class 1255 OID 16716)
--- Dependencies: 8
+-- TOC entry 293 (class 1255 OID 16716)
 -- Name: import_bundeslaender(); Type: FUNCTION; Schema: raw2005; Owner: -
 --
 
@@ -1056,8 +1221,7 @@ $$;
 
 
 --
--- TOC entry 282 (class 1255 OID 16719)
--- Dependencies: 8
+-- TOC entry 292 (class 1255 OID 16719)
 -- Name: import_parteien(); Type: FUNCTION; Schema: raw2005; Owner: -
 --
 
@@ -1073,8 +1237,7 @@ $$;
 
 
 --
--- TOC entry 290 (class 1255 OID 16865)
--- Dependencies: 8 930
+-- TOC entry 300 (class 1255 OID 16865)
 -- Name: import_wahlkreise(); Type: FUNCTION; Schema: raw2005; Owner: -
 --
 
@@ -1121,8 +1284,7 @@ $_$;
 
 
 --
--- TOC entry 299 (class 1255 OID 16900)
--- Dependencies: 8
+-- TOC entry 309 (class 1255 OID 16900)
 -- Name: map_wahlkreis(integer); Type: FUNCTION; Schema: raw2005; Owner: -
 --
 
@@ -1134,8 +1296,7 @@ CREATE FUNCTION map_wahlkreis(integer) RETURNS integer
 SET search_path = raw2009, pg_catalog;
 
 --
--- TOC entry 291 (class 1255 OID 16720)
--- Dependencies: 7
+-- TOC entry 301 (class 1255 OID 16720)
 -- Name: import_bundeslaender(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1147,8 +1308,7 @@ $$;
 
 
 --
--- TOC entry 292 (class 1255 OID 16391)
--- Dependencies: 930 7
+-- TOC entry 302 (class 1255 OID 16391)
 -- Name: import_direktkandidaten(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1196,8 +1356,7 @@ $_$;
 
 
 --
--- TOC entry 328 (class 1255 OID 16392)
--- Dependencies: 930 7
+-- TOC entry 358 (class 1255 OID 16392)
 -- Name: import_landeskandidaten(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1245,8 +1404,7 @@ $_$;
 
 
 --
--- TOC entry 289 (class 1255 OID 16635)
--- Dependencies: 930 7
+-- TOC entry 299 (class 1255 OID 16635)
 -- Name: import_landeslisten(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1291,8 +1449,7 @@ $_$;
 
 
 --
--- TOC entry 286 (class 1255 OID 16394)
--- Dependencies: 7
+-- TOC entry 296 (class 1255 OID 16394)
 -- Name: import_parteien(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1311,8 +1468,7 @@ $$;
 
 
 --
--- TOC entry 306 (class 1255 OID 59089)
--- Dependencies: 930 7
+-- TOC entry 317 (class 1255 OID 59089)
 -- Name: import_wahlberechtigte(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1333,8 +1489,7 @@ $$;
 
 
 --
--- TOC entry 293 (class 1255 OID 16589)
--- Dependencies: 7 930
+-- TOC entry 303 (class 1255 OID 16589)
 -- Name: import_wahlkreise(); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1381,8 +1536,7 @@ $_$;
 
 
 --
--- TOC entry 331 (class 1255 OID 16662)
--- Dependencies: 7
+-- TOC entry 361 (class 1255 OID 16662)
 -- Name: map_direktkandidat(integer); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1392,8 +1546,7 @@ CREATE FUNCTION map_direktkandidat(integer) RETURNS integer
 
 
 --
--- TOC entry 330 (class 1255 OID 16689)
--- Dependencies: 7
+-- TOC entry 360 (class 1255 OID 16689)
 -- Name: map_landeskandidat(integer); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1403,8 +1556,7 @@ CREATE FUNCTION map_landeskandidat(integer) RETURNS integer
 
 
 --
--- TOC entry 294 (class 1255 OID 16645)
--- Dependencies: 7
+-- TOC entry 304 (class 1255 OID 16645)
 -- Name: map_landesliste(integer); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1414,8 +1566,7 @@ CREATE FUNCTION map_landesliste(integer) RETURNS integer
 
 
 --
--- TOC entry 288 (class 1255 OID 16646)
--- Dependencies: 7
+-- TOC entry 298 (class 1255 OID 16646)
 -- Name: map_wahlkreis(integer); Type: FUNCTION; Schema: raw2009; Owner: -
 --
 
@@ -1428,21 +1579,20 @@ SET search_path = public, pg_catalog;
 
 --
 -- TOC entry 222 (class 1259 OID 33477)
--- Dependencies: 5
 -- Name: zweitstimmen_aggregation; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE zweitstimmen_aggregation (
-    partei_id integer NOT NULL,
+    partei_id integer,
     wahlkreis_id integer NOT NULL,
     stimmen bigint,
-    stimmen_vorperiode bigint
+    stimmen_vorperiode bigint,
+    id integer NOT NULL
 );
 
 
 --
 -- TOC entry 221 (class 1259 OID 33459)
--- Dependencies: 2312 5
 -- Name: zweitstimmen_prozent; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1452,7 +1602,6 @@ CREATE VIEW zweitstimmen_prozent AS
 
 --
 -- TOC entry 239 (class 1259 OID 41752)
--- Dependencies: 2326 5
 -- Name: ergebnisse_zweitstimme_diagramm; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1462,7 +1611,6 @@ CREATE VIEW ergebnisse_zweitstimme_diagramm AS
 
 --
 -- TOC entry 180 (class 1259 OID 16424)
--- Dependencies: 5
 -- Name: partei; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1475,8 +1623,7 @@ CREATE TABLE partei (
 SET search_path = adapter, pg_catalog;
 
 --
--- TOC entry 267 (class 1259 OID 59417)
--- Dependencies: 2348 14
+-- TOC entry 264 (class 1259 OID 59417)
 -- Name: ergebnisse_zweitstimme_diagramm_name; Type: VIEW; Schema: adapter; Owner: -
 --
 
@@ -1487,8 +1634,7 @@ CREATE VIEW ergebnisse_zweitstimme_diagramm_name AS
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 251 (class 1259 OID 59240)
--- Dependencies: 2334 5
+-- TOC entry 249 (class 1259 OID 59240)
 -- Name: direktkandidat_gewinner_land_partei; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1497,8 +1643,7 @@ CREATE VIEW direktkandidat_gewinner_land_partei AS
 
 
 --
--- TOC entry 252 (class 1259 OID 59244)
--- Dependencies: 2335 5
+-- TOC entry 250 (class 1259 OID 59244)
 -- Name: wahl_gewinner_aux; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1507,8 +1652,8 @@ CREATE VIEW wahl_gewinner_aux AS
 
 
 --
--- TOC entry 2430 (class 0 OID 0)
--- Dependencies: 252
+-- TOC entry 2522 (class 0 OID 0)
+-- Dependencies: 250
 -- Name: VIEW wahl_gewinner_aux; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -1517,8 +1662,7 @@ Außerdem wird die Differenz dieser Werte angegeben. Darauß lässt sich die Anz
 
 
 --
--- TOC entry 253 (class 1259 OID 59255)
--- Dependencies: 2336 5 903
+-- TOC entry 251 (class 1259 OID 59255)
 -- Name: wahl_gewinner; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1527,8 +1671,8 @@ CREATE VIEW wahl_gewinner AS
 
 
 --
--- TOC entry 2431 (class 0 OID 0)
--- Dependencies: 253
+-- TOC entry 2523 (class 0 OID 0)
+-- Dependencies: 251
 -- Name: VIEW wahl_gewinner; Type: COMMENT; Schema: public; Owner: -
 --
 
@@ -1538,8 +1682,7 @@ COMMENT ON VIEW wahl_gewinner IS 'Listet die Gewinner der Wahl auf (mit Land und
 SET search_path = adapter, pg_catalog;
 
 --
--- TOC entry 263 (class 1259 OID 59399)
--- Dependencies: 2344 14
+-- TOC entry 260 (class 1259 OID 59399)
 -- Name: mitglieder_bundestag; Type: VIEW; Schema: adapter; Owner: -
 --
 
@@ -1548,8 +1691,7 @@ CREATE VIEW mitglieder_bundestag AS
 
 
 --
--- TOC entry 264 (class 1259 OID 59404)
--- Dependencies: 2345 14
+-- TOC entry 261 (class 1259 OID 59404)
 -- Name: sitzverteilung_pro_partei_name; Type: VIEW; Schema: adapter; Owner: -
 --
 
@@ -1558,8 +1700,7 @@ CREATE VIEW sitzverteilung_pro_partei_name AS
 
 
 --
--- TOC entry 254 (class 1259 OID 59265)
--- Dependencies: 2337 14
+-- TOC entry 272 (class 1259 OID 59527)
 -- Name: ueberhangmandate; Type: VIEW; Schema: adapter; Owner: -
 --
 
@@ -1568,8 +1709,7 @@ CREATE VIEW ueberhangmandate AS
 
 
 --
--- TOC entry 259 (class 1259 OID 59338)
--- Dependencies: 2342 14
+-- TOC entry 256 (class 1259 OID 59338)
 -- Name: wahlbeteiligung; Type: VIEW; Schema: adapter; Owner: -
 --
 
@@ -1577,66 +1717,10 @@ CREATE VIEW wahlbeteiligung AS
     WITH abgegebene_stimmen AS (SELECT erststimmen_aggregation.wahlkreis_id, sum(erststimmen_aggregation.stimmen) AS stimmen FROM public.erststimmen_aggregation GROUP BY erststimmen_aggregation.wahlkreis_id) SELECT wk.id AS wahlkreis_id, wk.name, wk.wahlberechtigte, abs.stimmen, (((abs.stimmen * (100)::numeric) / (wk.wahlberechtigte)::numeric))::numeric(4,2) AS beteiligung FROM public.wahlkreis wk, abgegebene_stimmen abs WHERE (abs.wahlkreis_id = wk.id);
 
 
---
--- TOC entry 265 (class 1259 OID 59409)
--- Dependencies: 2346 14
--- Name: wahlkreissieger_partei_erststimme; Type: VIEW; Schema: adapter; Owner: -
---
-
-CREATE VIEW wahlkreissieger_partei_erststimme AS
-    SELECT wk.name AS wahlkreis, p.name AS partei_name, dk.vorname, dk.nachname FROM public.wahlkreis wk, public.partei p, public.direktkandidat dk, public.wahl_gewinner wg WHERE (((((wg.typ)::text = 'Direktkandidat'::text) AND (wg.kandidat_id = dk.id)) AND (p.id = wg.partei_id)) AND (dk.wahlkreis_id = wk.id));
-
-
---
--- TOC entry 266 (class 1259 OID 59413)
--- Dependencies: 2347 14
--- Name: wahlkreissieger_partei_zweitstimme; Type: VIEW; Schema: adapter; Owner: -
---
-
-CREATE VIEW wahlkreissieger_partei_zweitstimme AS
-    SELECT wk.name AS wahlkreis, p.name AS partei_name FROM public.zweitstimmen_aggregation za1, public.zweitstimmen_aggregation za2, public.partei p, public.wahlkreis wk WHERE (((za1.wahlkreis_id = za2.wahlkreis_id) AND (za1.partei_id = p.id)) AND (za1.wahlkreis_id = wk.id)) GROUP BY za1.wahlkreis_id, p.name, za1.stimmen, wk.name HAVING (za1.stimmen = max(za2.stimmen));
-
-
-SET search_path = alt, pg_catalog;
-
---
--- TOC entry 240 (class 1259 OID 41770)
--- Dependencies: 2327 11
--- Name: prozent_partei_zweitstimmen; Type: VIEW; Schema: alt; Owner: -
---
-
-CREATE VIEW prozent_partei_zweitstimmen AS
-    WITH stimmen_pro_partei AS (SELECT zweitstimmen_aggregation.partei_id, sum(zweitstimmen_aggregation.stimmen) AS stimmen FROM public.zweitstimmen_aggregation GROUP BY zweitstimmen_aggregation.partei_id), gesamtstimmen AS (SELECT sum(zweitstimmen_aggregation.stimmen) AS stimmen FROM public.zweitstimmen_aggregation) SELECT sp.partei_id, (sp.stimmen / gs.stimmen) AS prozent FROM stimmen_pro_partei sp, gesamtstimmen gs;
-
-
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 170 (class 1259 OID 16399)
--- Dependencies: 5 169
--- Name: Direktkandidat_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE "Direktkandidat_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 2432 (class 0 OID 0)
--- Dependencies: 170
--- Name: Direktkandidat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE "Direktkandidat_id_seq" OWNED BY direktkandidat.id;
-
-
---
 -- TOC entry 171 (class 1259 OID 16401)
--- Dependencies: 5
 -- Name: erststimme; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1649,7 +1733,6 @@ CREATE TABLE erststimme (
 
 --
 -- TOC entry 172 (class 1259 OID 16404)
--- Dependencies: 5 171
 -- Name: Erststimme_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1662,7 +1745,7 @@ CREATE SEQUENCE "Erststimme_id_seq"
 
 
 --
--- TOC entry 2433 (class 0 OID 0)
+-- TOC entry 2524 (class 0 OID 0)
 -- Dependencies: 172
 -- Name: Erststimme_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1671,8 +1754,92 @@ ALTER SEQUENCE "Erststimme_id_seq" OWNED BY erststimme.id;
 
 
 --
+-- TOC entry 242 (class 1259 OID 59077)
+-- Name: erststimme_q7; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE erststimme_q7 (
+    id integer DEFAULT nextval('"Erststimme_id_seq"'::regclass) NOT NULL,
+    wahlkreis_id integer,
+    direktkandidat_id integer
+);
+
+
+--
+-- TOC entry 269 (class 1259 OID 59469)
+-- Name: erststimmen_aggregation_q7; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW erststimmen_aggregation_q7 AS
+    WITH agg_erststimme_q7 AS (SELECT eq7.direktkandidat_id, eq7.wahlkreis_id, count(*) AS stimmen FROM erststimme_q7 eq7 GROUP BY eq7.direktkandidat_id, eq7.wahlkreis_id) SELECT aeq7.direktkandidat_id, aeq7.wahlkreis_id, aeq7.stimmen, ea.stimmen_vorperiode FROM agg_erststimme_q7 aeq7, erststimmen_aggregation ea WHERE (((ea.wahlkreis_id = aeq7.wahlkreis_id) AND ((ea.direktkandidat_id IS NULL) AND (aeq7.direktkandidat_id IS NULL))) OR (ea.direktkandidat_id = aeq7.direktkandidat_id));
+
+
+SET search_path = adapter, pg_catalog;
+
+--
+-- TOC entry 276 (class 1259 OID 59551)
+-- Name: wahlbeteiligung_q7; Type: VIEW; Schema: adapter; Owner: -
+--
+
+CREATE VIEW wahlbeteiligung_q7 AS
+    WITH abgegebene_stimmen AS (SELECT ea.wahlkreis_id, sum(ea.stimmen) AS stimmen FROM public.erststimmen_aggregation_q7 ea GROUP BY ea.wahlkreis_id) SELECT wk.id AS wahlkreis_id, wk.name, wk.wahlberechtigte, abs.stimmen, (((abs.stimmen * (100)::numeric) / (wk.wahlberechtigte)::numeric))::numeric(4,2) AS beteiligung FROM public.wahlkreis wk, abgegebene_stimmen abs WHERE (abs.wahlkreis_id = wk.id);
+
+
+--
+-- TOC entry 262 (class 1259 OID 59409)
+-- Name: wahlkreissieger_partei_erststimme; Type: VIEW; Schema: adapter; Owner: -
+--
+
+CREATE VIEW wahlkreissieger_partei_erststimme AS
+    SELECT wk.name AS wahlkreis, p.name AS partei_name, dk.vorname, dk.nachname FROM public.wahlkreis wk, public.partei p, public.direktkandidat dk, public.wahl_gewinner wg WHERE (((((wg.typ)::text = 'Direktkandidat'::text) AND (wg.kandidat_id = dk.id)) AND (p.id = wg.partei_id)) AND (dk.wahlkreis_id = wk.id));
+
+
+--
+-- TOC entry 263 (class 1259 OID 59413)
+-- Name: wahlkreissieger_partei_zweitstimme; Type: VIEW; Schema: adapter; Owner: -
+--
+
+CREATE VIEW wahlkreissieger_partei_zweitstimme AS
+    SELECT wk.name AS wahlkreis, p.name AS partei_name FROM public.zweitstimmen_aggregation za1, public.zweitstimmen_aggregation za2, public.partei p, public.wahlkreis wk WHERE (((za1.wahlkreis_id = za2.wahlkreis_id) AND (za1.partei_id = p.id)) AND (za1.wahlkreis_id = wk.id)) GROUP BY za1.wahlkreis_id, p.name, za1.stimmen, wk.name HAVING (za1.stimmen = max(za2.stimmen));
+
+
+SET search_path = alt, pg_catalog;
+
+--
+-- TOC entry 240 (class 1259 OID 41770)
+-- Name: prozent_partei_zweitstimmen; Type: VIEW; Schema: alt; Owner: -
+--
+
+CREATE VIEW prozent_partei_zweitstimmen AS
+    WITH stimmen_pro_partei AS (SELECT zweitstimmen_aggregation.partei_id, sum(zweitstimmen_aggregation.stimmen) AS stimmen FROM public.zweitstimmen_aggregation GROUP BY zweitstimmen_aggregation.partei_id), gesamtstimmen AS (SELECT sum(zweitstimmen_aggregation.stimmen) AS stimmen FROM public.zweitstimmen_aggregation) SELECT sp.partei_id, (sp.stimmen / gs.stimmen) AS prozent FROM stimmen_pro_partei sp, gesamtstimmen gs;
+
+
+SET search_path = public, pg_catalog;
+
+--
+-- TOC entry 170 (class 1259 OID 16399)
+-- Name: Direktkandidat_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE "Direktkandidat_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2525 (class 0 OID 0)
+-- Dependencies: 170
+-- Name: Direktkandidat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE "Direktkandidat_id_seq" OWNED BY direktkandidat.id;
+
+
+--
 -- TOC entry 175 (class 1259 OID 16412)
--- Dependencies: 174 5
 -- Name: Land_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1685,7 +1852,7 @@ CREATE SEQUENCE "Land_id_seq"
 
 
 --
--- TOC entry 2434 (class 0 OID 0)
+-- TOC entry 2526 (class 0 OID 0)
 -- Dependencies: 175
 -- Name: Land_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1695,7 +1862,6 @@ ALTER SEQUENCE "Land_id_seq" OWNED BY land.id;
 
 --
 -- TOC entry 177 (class 1259 OID 16417)
--- Dependencies: 176 5
 -- Name: Landeskandidat_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1708,7 +1874,7 @@ CREATE SEQUENCE "Landeskandidat_id_seq"
 
 
 --
--- TOC entry 2435 (class 0 OID 0)
+-- TOC entry 2527 (class 0 OID 0)
 -- Dependencies: 177
 -- Name: Landeskandidat_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1718,7 +1884,6 @@ ALTER SEQUENCE "Landeskandidat_id_seq" OWNED BY landeskandidat.id;
 
 --
 -- TOC entry 179 (class 1259 OID 16422)
--- Dependencies: 5 178
 -- Name: Landesliste_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1731,7 +1896,7 @@ CREATE SEQUENCE "Landesliste_id_seq"
 
 
 --
--- TOC entry 2436 (class 0 OID 0)
+-- TOC entry 2528 (class 0 OID 0)
 -- Dependencies: 179
 -- Name: Landesliste_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1741,7 +1906,6 @@ ALTER SEQUENCE "Landesliste_id_seq" OWNED BY landesliste.id;
 
 --
 -- TOC entry 181 (class 1259 OID 16427)
--- Dependencies: 5 180
 -- Name: Partei_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1754,7 +1918,7 @@ CREATE SEQUENCE "Partei_id_seq"
 
 
 --
--- TOC entry 2437 (class 0 OID 0)
+-- TOC entry 2529 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: Partei_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1764,7 +1928,6 @@ ALTER SEQUENCE "Partei_id_seq" OWNED BY partei.id;
 
 --
 -- TOC entry 183 (class 1259 OID 16437)
--- Dependencies: 182 5
 -- Name: Wahlkreis_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1777,7 +1940,7 @@ CREATE SEQUENCE "Wahlkreis_id_seq"
 
 
 --
--- TOC entry 2438 (class 0 OID 0)
+-- TOC entry 2530 (class 0 OID 0)
 -- Dependencies: 183
 -- Name: Wahlkreis_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1787,7 +1950,6 @@ ALTER SEQUENCE "Wahlkreis_id_seq" OWNED BY wahlkreis.id;
 
 --
 -- TOC entry 184 (class 1259 OID 16439)
--- Dependencies: 5
 -- Name: zweitstimme; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1800,7 +1962,6 @@ CREATE TABLE zweitstimme (
 
 --
 -- TOC entry 185 (class 1259 OID 16442)
--- Dependencies: 184 5
 -- Name: Zweitstimme_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -1813,7 +1974,7 @@ CREATE SEQUENCE "Zweitstimme_id_seq"
 
 
 --
--- TOC entry 2439 (class 0 OID 0)
+-- TOC entry 2531 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: Zweitstimme_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1822,8 +1983,7 @@ ALTER SEQUENCE "Zweitstimme_id_seq" OWNED BY zweitstimme.id;
 
 
 --
--- TOC entry 256 (class 1259 OID 59293)
--- Dependencies: 2339 5
+-- TOC entry 253 (class 1259 OID 59293)
 -- Name: anzahl_direktmandat_auch_landeskandidat; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1832,8 +1992,19 @@ CREATE VIEW anzahl_direktmandat_auch_landeskandidat AS
 
 
 --
+-- TOC entry 271 (class 1259 OID 59512)
+-- Name: berechtigten_uuid; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE berechtigten_uuid (
+    id uuid NOT NULL,
+    used boolean DEFAULT false,
+    jahr integer
+);
+
+
+--
 -- TOC entry 244 (class 1259 OID 59094)
--- Dependencies: 2329 5
 -- Name: direktkandidat_differenz_auf_ersten; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1843,7 +2014,6 @@ CREATE VIEW direktkandidat_differenz_auf_ersten AS
 
 --
 -- TOC entry 245 (class 1259 OID 59106)
--- Dependencies: 2330 5
 -- Name: direktkandidat_differenz_auf_zweiten; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1852,8 +2022,25 @@ CREATE VIEW direktkandidat_differenz_auf_zweiten AS
 
 
 --
+-- TOC entry 274 (class 1259 OID 59541)
+-- Name: direktkandidat_gewinner_q7; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW direktkandidat_gewinner_q7 AS
+    WITH max_stimmen_per_wahlkreis AS (SELECT ea2.wahlkreis_id, max(ea2.stimmen) AS max_stimmen FROM erststimmen_aggregation_q7 ea2 GROUP BY ea2.wahlkreis_id) SELECT ea.wahlkreis_id, ea.direktkandidat_id, (ea.stimmen)::integer AS stimmen FROM erststimmen_aggregation_q7 ea, max_stimmen_per_wahlkreis mspw WHERE ((ea.wahlkreis_id = mspw.wahlkreis_id) AND (ea.stimmen = mspw.max_stimmen));
+
+
+--
+-- TOC entry 275 (class 1259 OID 59545)
+-- Name: direktkandidat_gewinner_land_partei_q7; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW direktkandidat_gewinner_land_partei_q7 AS
+    SELECT dg.direktkandidat_id AS kandidat_id, l.id AS land_id, p.id AS partei_id FROM direktkandidat_gewinner_q7 dg, direktkandidat d, land l, partei p, wahlkreis wk WHERE ((((dg.direktkandidat_id = d.id) AND (d.partei_id = p.id)) AND (dg.wahlkreis_id = wk.id)) AND (wk.land_id = l.id));
+
+
+--
 -- TOC entry 236 (class 1259 OID 41732)
--- Dependencies: 2323 5
 -- Name: direktkandidaten_pro_partei; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1861,34 +2048,10 @@ CREATE VIEW direktkandidaten_pro_partei AS
     SELECT d.partei_id, count(*) AS anzahl_direktkandidaten FROM direktkandidat_gewinner dg, direktkandidat d WHERE (dg.direktkandidat_id = d.id) GROUP BY d.partei_id;
 
 
---
--- TOC entry 242 (class 1259 OID 59077)
--- Dependencies: 5
--- Name: erststimme_q7; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE erststimme_q7 (
-    id integer,
-    wahlkreis_id integer,
-    direktkandidat_id integer
-);
-
-
---
--- TOC entry 246 (class 1259 OID 59112)
--- Dependencies: 2331 5
--- Name: erststimmen_agg_q7; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW erststimmen_agg_q7 AS
-    SELECT erststimmen_aggregation.direktkandidat_id, erststimmen_aggregation.wahlkreis_id, erststimmen_aggregation.stimmen FROM erststimmen_aggregation WHERE ((erststimmen_aggregation.wahlkreis_id < 214) OR (erststimmen_aggregation.wahlkreis_id > 217)) UNION ALL SELECT erststimme_q7.direktkandidat_id, erststimme_q7.wahlkreis_id, count(*) AS stimmen FROM erststimme_q7 GROUP BY erststimme_q7.direktkandidat_id, erststimme_q7.wahlkreis_id;
-
-
 SET search_path = stimmen2009, pg_catalog;
 
 --
 -- TOC entry 201 (class 1259 OID 24943)
--- Dependencies: 9
 -- Name: ErststimmenEndgueltig; Type: TABLE; Schema: stimmen2009; Owner: -; Tablespace: 
 --
 
@@ -1903,7 +2066,6 @@ CREATE TABLE "ErststimmenEndgueltig" (
 
 --
 -- TOC entry 205 (class 1259 OID 25025)
--- Dependencies: 2301 9
 -- Name: direktkandidat_stimmen; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -1913,7 +2075,6 @@ CREATE VIEW direktkandidat_stimmen AS
 
 --
 -- TOC entry 204 (class 1259 OID 25001)
--- Dependencies: 2300 9
 -- Name: erststimme_ungueltige; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -1923,7 +2084,6 @@ CREATE VIEW erststimme_ungueltige AS
 
 --
 -- TOC entry 215 (class 1259 OID 25180)
--- Dependencies: 2307 9
 -- Name: erststimme_insges; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -1935,7 +2095,6 @@ SET search_path = public, pg_catalog;
 
 --
 -- TOC entry 219 (class 1259 OID 33447)
--- Dependencies: 2310 5
 -- Name: erststimmen_aggregation_ausKerg; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1944,8 +2103,38 @@ CREATE VIEW "erststimmen_aggregation_ausKerg" AS
 
 
 --
--- TOC entry 257 (class 1259 OID 59301)
--- Dependencies: 2340 5
+-- TOC entry 277 (class 1259 OID 59586)
+-- Name: erststimmen_aggregation_full; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW erststimmen_aggregation_full AS
+    WITH agg_erststimme AS (SELECT e.direktkandidat_id, e.wahlkreis_id, count(*) AS stimmen FROM erststimme e GROUP BY e.direktkandidat_id, e.wahlkreis_id) SELECT ae.direktkandidat_id, ae.wahlkreis_id, ae.stimmen FROM agg_erststimme ae;
+
+
+--
+-- TOC entry 267 (class 1259 OID 59445)
+-- Name: erststimmen_aggregation_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE erststimmen_aggregation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2532 (class 0 OID 0)
+-- Dependencies: 267
+-- Name: erststimmen_aggregation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE erststimmen_aggregation_id_seq OWNED BY erststimmen_aggregation.id;
+
+
+--
+-- TOC entry 254 (class 1259 OID 59301)
 -- Name: hat_direktmandat; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1955,7 +2144,6 @@ CREATE VIEW hat_direktmandat AS
 
 --
 -- TOC entry 173 (class 1259 OID 16406)
--- Dependencies: 5
 -- Name: jahr; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1966,7 +2154,6 @@ CREATE TABLE jahr (
 
 --
 -- TOC entry 237 (class 1259 OID 41736)
--- Dependencies: 2324 5
 -- Name: parteien_einzug; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1975,8 +2162,7 @@ CREATE VIEW parteien_einzug AS
 
 
 --
--- TOC entry 249 (class 1259 OID 59230)
--- Dependencies: 2333 5
+-- TOC entry 247 (class 1259 OID 59230)
 -- Name: partei_land_stimmen_einzug; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1986,7 +2172,6 @@ CREATE VIEW partei_land_stimmen_einzug AS
 
 --
 -- TOC entry 241 (class 1259 OID 41778)
--- Dependencies: 2328 5
 -- Name: partei_stimmen_pro_land; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -1996,7 +2181,6 @@ CREATE VIEW partei_stimmen_pro_land AS
 
 --
 -- TOC entry 217 (class 1259 OID 25211)
--- Dependencies: 5
 -- Name: scherperfaktoren; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2007,7 +2191,6 @@ CREATE TABLE scherperfaktoren (
 
 --
 -- TOC entry 224 (class 1259 OID 41672)
--- Dependencies: 2313 5
 -- Name: scherper_auswertung_bund; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -2017,7 +2200,6 @@ CREATE VIEW scherper_auswertung_bund AS
 
 --
 -- TOC entry 238 (class 1259 OID 41744)
--- Dependencies: 2325 5
 -- Name: sitzverteilung_ohne_ueberhangmandate; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -2026,8 +2208,7 @@ CREATE VIEW sitzverteilung_ohne_ueberhangmandate AS
 
 
 --
--- TOC entry 258 (class 1259 OID 59318)
--- Dependencies: 2341 5
+-- TOC entry 255 (class 1259 OID 59318)
 -- Name: wahlbeteiligung; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -2037,12 +2218,11 @@ CREATE VIEW wahlbeteiligung AS
 
 --
 -- TOC entry 243 (class 1259 OID 59080)
--- Dependencies: 5
 -- Name: zweitstimme_q7; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
 CREATE TABLE zweitstimme_q7 (
-    id integer,
+    id integer DEFAULT nextval('"Zweitstimme_id_seq"'::regclass) NOT NULL,
     wahlkreis_id integer,
     landesliste_id integer
 );
@@ -2052,7 +2232,6 @@ SET search_path = stimmen2009, pg_catalog;
 
 --
 -- TOC entry 203 (class 1259 OID 24989)
--- Dependencies: 9
 -- Name: ZweitstimmenEndgueltig; Type: TABLE; Schema: stimmen2009; Owner: -; Tablespace: 
 --
 
@@ -2067,7 +2246,6 @@ CREATE TABLE "ZweitstimmenEndgueltig" (
 
 --
 -- TOC entry 210 (class 1259 OID 25150)
--- Dependencies: 2306 9
 -- Name: landesliste_stimmen; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2077,7 +2255,6 @@ CREATE VIEW landesliste_stimmen AS
 
 --
 -- TOC entry 207 (class 1259 OID 25138)
--- Dependencies: 2303 9
 -- Name: zweitstimme_ungueltige; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2089,7 +2266,6 @@ SET search_path = public, pg_catalog;
 
 --
 -- TOC entry 218 (class 1259 OID 33439)
--- Dependencies: 2309 5
 -- Name: zweitstimmen_aggregation_ausKerg; Type: VIEW; Schema: public; Owner: -
 --
 
@@ -2098,20 +2274,49 @@ CREATE VIEW "zweitstimmen_aggregation_ausKerg" AS
 
 
 --
--- TOC entry 247 (class 1259 OID 59116)
--- Dependencies: 2332 5
--- Name: zweitstimmen_q7_agg; Type: VIEW; Schema: public; Owner: -
+-- TOC entry 278 (class 1259 OID 59590)
+-- Name: zweitstimmen_aggregation_full; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW zweitstimmen_q7_agg AS
-    SELECT zweitstimmen_aggregation.partei_id, zweitstimmen_aggregation.wahlkreis_id, zweitstimmen_aggregation.stimmen FROM zweitstimmen_aggregation WHERE ((zweitstimmen_aggregation.wahlkreis_id < 213) OR (zweitstimmen_aggregation.wahlkreis_id > 217)) UNION ALL (WITH zweitstimmenwahlkreisliste AS (SELECT z.landesliste_id, z.wahlkreis_id, count(z.*) AS stimmen FROM zweitstimme_q7 z, landesliste ll WHERE (z.landesliste_id = ll.id) GROUP BY z.landesliste_id, z.wahlkreis_id) SELECT p.id AS partei_id, zl.wahlkreis_id, zl.stimmen FROM partei p, zweitstimmenwahlkreisliste zl, landesliste ll2 WHERE ((ll2.id = zl.landesliste_id) AND (p.id = ll2.partei_id)));
+CREATE VIEW zweitstimmen_aggregation_full AS
+    WITH aggregierte_zweitstimmen AS (SELECT ll.partei_id, z.wahlkreis_id, count(*) AS stimmen FROM zweitstimme z, landesliste ll WHERE (z.landesliste_id = ll.id) GROUP BY ll.partei_id, z.wahlkreis_id) SELECT az.partei_id, az.wahlkreis_id, az.stimmen FROM aggregierte_zweitstimmen az UNION ALL SELECT NULL::integer AS partei_id, zweitstimme.wahlkreis_id, count(*) AS stimmen FROM zweitstimme WHERE (zweitstimme.landesliste_id IS NULL) GROUP BY zweitstimme.wahlkreis_id;
+
+
+--
+-- TOC entry 268 (class 1259 OID 59455)
+-- Name: zweitstimmen_aggregation_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE zweitstimmen_aggregation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- TOC entry 2533 (class 0 OID 0)
+-- Dependencies: 268
+-- Name: zweitstimmen_aggregation_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE zweitstimmen_aggregation_id_seq OWNED BY zweitstimmen_aggregation.id;
+
+
+--
+-- TOC entry 270 (class 1259 OID 59473)
+-- Name: zweitstimmen_aggregation_q7; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW zweitstimmen_aggregation_q7 AS
+    WITH aggregierte_zweitstimmen_q7 AS (SELECT ll.partei_id, z.wahlkreis_id, count(*) AS stimmen FROM zweitstimme_q7 z, landesliste ll WHERE (z.landesliste_id = ll.id) GROUP BY ll.partei_id, z.wahlkreis_id) (SELECT azq7.partei_id, azq7.wahlkreis_id, azq7.stimmen, za.stimmen_vorperiode FROM aggregierte_zweitstimmen_q7 azq7, zweitstimmen_aggregation za WHERE ((za.partei_id = azq7.partei_id) AND (za.wahlkreis_id = azq7.wahlkreis_id)) UNION ALL SELECT za.partei_id, za.wahlkreis_id, za.stimmen, za.stimmen_vorperiode FROM zweitstimmen_aggregation za, (SELECT DISTINCT aggregierte_zweitstimmen_q7.wahlkreis_id FROM aggregierte_zweitstimmen_q7) wks WHERE ((za.partei_id = 1) AND (wks.wahlkreis_id = za.wahlkreis_id))) UNION ALL SELECT NULL::integer AS partei_id, zweitstimme_q7.wahlkreis_id, count(*) AS stimmen, (0)::bigint AS stimmen_vorperiode FROM zweitstimme_q7 WHERE (zweitstimme_q7.landesliste_id IS NULL) GROUP BY zweitstimme_q7.wahlkreis_id;
 
 
 SET search_path = raw2005, pg_catalog;
 
 --
 -- TOC entry 196 (class 1259 OID 16866)
--- Dependencies: 8
 -- Name: bundeslandkuerzel; Type: TABLE; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2124,7 +2329,6 @@ CREATE TABLE bundeslandkuerzel (
 
 --
 -- TOC entry 198 (class 1259 OID 16895)
--- Dependencies: 8
 -- Name: mapid_wahlkreise; Type: TABLE; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2136,7 +2340,6 @@ CREATE TABLE mapid_wahlkreise (
 
 --
 -- TOC entry 193 (class 1259 OID 16697)
--- Dependencies: 8
 -- Name: wahlbewerber; Type: TABLE; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2153,7 +2356,6 @@ CREATE TABLE wahlbewerber (
 
 --
 -- TOC entry 197 (class 1259 OID 16871)
--- Dependencies: 2296 8
 -- Name: wahlbewerber_mit_land; Type: VIEW; Schema: raw2005; Owner: -
 --
 
@@ -2163,7 +2365,6 @@ CREATE VIEW wahlbewerber_mit_land AS
 
 --
 -- TOC entry 199 (class 1259 OID 24910)
--- Dependencies: 2297 8
 -- Name: wahlbewerber_direktkandidat; Type: VIEW; Schema: raw2005; Owner: -
 --
 
@@ -2173,7 +2374,6 @@ CREATE VIEW wahlbewerber_direktkandidat AS
 
 --
 -- TOC entry 194 (class 1259 OID 16701)
--- Dependencies: 8 193
 -- Name: wahlbewerber_id_seq; Type: SEQUENCE; Schema: raw2005; Owner: -
 --
 
@@ -2186,7 +2386,7 @@ CREATE SEQUENCE wahlbewerber_id_seq
 
 
 --
--- TOC entry 2440 (class 0 OID 0)
+-- TOC entry 2534 (class 0 OID 0)
 -- Dependencies: 194
 -- Name: wahlbewerber_id_seq; Type: SEQUENCE OWNED BY; Schema: raw2005; Owner: -
 --
@@ -2196,7 +2396,6 @@ ALTER SEQUENCE wahlbewerber_id_seq OWNED BY wahlbewerber.id;
 
 --
 -- TOC entry 200 (class 1259 OID 24914)
--- Dependencies: 2298 8
 -- Name: wahlbewerber_landesliste; Type: VIEW; Schema: raw2005; Owner: -
 --
 
@@ -2206,7 +2405,6 @@ CREATE VIEW wahlbewerber_landesliste AS
 
 --
 -- TOC entry 195 (class 1259 OID 16709)
--- Dependencies: 8
 -- Name: wahlkreise; Type: TABLE; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2221,7 +2419,6 @@ SET search_path = raw2009, pg_catalog;
 
 --
 -- TOC entry 186 (class 1259 OID 16444)
--- Dependencies: 7
 -- Name: landeslisten; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2234,7 +2431,6 @@ CREATE TABLE landeslisten (
 
 --
 -- TOC entry 187 (class 1259 OID 16447)
--- Dependencies: 7
 -- Name: listenplaetze; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2247,7 +2443,6 @@ CREATE TABLE listenplaetze (
 
 --
 -- TOC entry 214 (class 1259 OID 25169)
--- Dependencies: 7
 -- Name: mapid_direktkandidaten; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2259,7 +2454,6 @@ CREATE TABLE mapid_direktkandidaten (
 
 --
 -- TOC entry 213 (class 1259 OID 25164)
--- Dependencies: 7
 -- Name: mapid_landeskandidaten; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2271,7 +2465,6 @@ CREATE TABLE mapid_landeskandidaten (
 
 --
 -- TOC entry 212 (class 1259 OID 25159)
--- Dependencies: 7
 -- Name: mapid_landeslisten; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2283,7 +2476,6 @@ CREATE TABLE mapid_landeslisten (
 
 --
 -- TOC entry 211 (class 1259 OID 25154)
--- Dependencies: 7
 -- Name: mapid_wahlkreise; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2295,7 +2487,6 @@ CREATE TABLE mapid_wahlkreise (
 
 --
 -- TOC entry 188 (class 1259 OID 16450)
--- Dependencies: 7
 -- Name: wahlbewerber; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2311,7 +2502,6 @@ CREATE TABLE wahlbewerber (
 
 --
 -- TOC entry 202 (class 1259 OID 24953)
--- Dependencies: 2299 7
 -- Name: wahlbewerber_mit_titel; Type: VIEW; Schema: raw2009; Owner: -
 --
 
@@ -2321,7 +2511,6 @@ CREATE VIEW wahlbewerber_mit_titel AS
 
 --
 -- TOC entry 189 (class 1259 OID 16453)
--- Dependencies: 7
 -- Name: wahlbewerber_mit_wahlkreis; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2336,7 +2525,6 @@ CREATE TABLE wahlbewerber_mit_wahlkreis (
 
 --
 -- TOC entry 190 (class 1259 OID 16456)
--- Dependencies: 2294 7
 -- Name: wahlbewerber_direktkandidat; Type: VIEW; Schema: raw2009; Owner: -
 --
 
@@ -2346,7 +2534,6 @@ CREATE VIEW wahlbewerber_direktkandidat AS
 
 --
 -- TOC entry 191 (class 1259 OID 16460)
--- Dependencies: 2295 7
 -- Name: wahlbewerber_landesliste; Type: VIEW; Schema: raw2009; Owner: -
 --
 
@@ -2356,7 +2543,6 @@ CREATE VIEW wahlbewerber_landesliste AS
 
 --
 -- TOC entry 192 (class 1259 OID 16464)
--- Dependencies: 7
 -- Name: wahlkreise; Type: TABLE; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2373,7 +2559,6 @@ SET search_path = stimmen2005, pg_catalog;
 
 --
 -- TOC entry 225 (class 1259 OID 41681)
--- Dependencies: 10
 -- Name: ErststimmenEndgueltig; Type: TABLE; Schema: stimmen2005; Owner: -; Tablespace: 
 --
 
@@ -2388,7 +2573,6 @@ CREATE TABLE "ErststimmenEndgueltig" (
 
 --
 -- TOC entry 226 (class 1259 OID 41684)
--- Dependencies: 10
 -- Name: ZweitstimmenEndgueltig; Type: TABLE; Schema: stimmen2005; Owner: -; Tablespace: 
 --
 
@@ -2403,7 +2587,6 @@ CREATE TABLE "ZweitstimmenEndgueltig" (
 
 --
 -- TOC entry 227 (class 1259 OID 41687)
--- Dependencies: 2314 10
 -- Name: direktkandidat_stimmen; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2413,7 +2596,6 @@ CREATE VIEW direktkandidat_stimmen AS
 
 --
 -- TOC entry 232 (class 1259 OID 41707)
--- Dependencies: 2319 10
 -- Name: direktkandidat_uebrige; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2423,7 +2605,6 @@ CREATE VIEW direktkandidat_uebrige AS
 
 --
 -- TOC entry 228 (class 1259 OID 41691)
--- Dependencies: 2315 10
 -- Name: erststimme_ungueltige; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2433,7 +2614,6 @@ CREATE VIEW erststimme_ungueltige AS
 
 --
 -- TOC entry 229 (class 1259 OID 41695)
--- Dependencies: 2316 10
 -- Name: erststimme_insges; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2443,7 +2623,6 @@ CREATE VIEW erststimme_insges AS
 
 --
 -- TOC entry 233 (class 1259 OID 41711)
--- Dependencies: 2320 10
 -- Name: erststimmen_statistik; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2453,7 +2632,6 @@ CREATE VIEW erststimmen_statistik AS
 
 --
 -- TOC entry 230 (class 1259 OID 41699)
--- Dependencies: 2317 10
 -- Name: landesliste_stimmen; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2463,7 +2641,6 @@ CREATE VIEW landesliste_stimmen AS
 
 --
 -- TOC entry 231 (class 1259 OID 41703)
--- Dependencies: 2318 10
 -- Name: zweitstimme_ungueltige; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2473,7 +2650,6 @@ CREATE VIEW zweitstimme_ungueltige AS
 
 --
 -- TOC entry 234 (class 1259 OID 41715)
--- Dependencies: 2321 10
 -- Name: zweitstimme_insges; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2483,7 +2659,6 @@ CREATE VIEW zweitstimme_insges AS
 
 --
 -- TOC entry 235 (class 1259 OID 41719)
--- Dependencies: 2322 10
 -- Name: zweitstimmen_statistik; Type: VIEW; Schema: stimmen2005; Owner: -
 --
 
@@ -2495,7 +2670,6 @@ SET search_path = stimmen2009, pg_catalog;
 
 --
 -- TOC entry 206 (class 1259 OID 25108)
--- Dependencies: 2302 9
 -- Name: direktkandidat_uebrige; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2505,7 +2679,6 @@ CREATE VIEW direktkandidat_uebrige AS
 
 --
 -- TOC entry 208 (class 1259 OID 25142)
--- Dependencies: 2304 9
 -- Name: erststimmen_statistik; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2515,7 +2688,6 @@ CREATE VIEW erststimmen_statistik AS
 
 --
 -- TOC entry 216 (class 1259 OID 25184)
--- Dependencies: 2308 9
 -- Name: zweitstimme_insges; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2525,7 +2697,6 @@ CREATE VIEW zweitstimme_insges AS
 
 --
 -- TOC entry 209 (class 1259 OID 25146)
--- Dependencies: 2305 9
 -- Name: zweitstimmen_statistik; Type: VIEW; Schema: stimmen2009; Owner: -
 --
 
@@ -2536,8 +2707,7 @@ CREATE VIEW zweitstimmen_statistik AS
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 2349 (class 2604 OID 16467)
--- Dependencies: 170 169
+-- TOC entry 2407 (class 2604 OID 16467)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2545,8 +2715,7 @@ ALTER TABLE ONLY direktkandidat ALTER COLUMN id SET DEFAULT nextval('"Direktkand
 
 
 --
--- TOC entry 2350 (class 2604 OID 16468)
--- Dependencies: 172 171
+-- TOC entry 2408 (class 2604 OID 16468)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2554,8 +2723,15 @@ ALTER TABLE ONLY erststimme ALTER COLUMN id SET DEFAULT nextval('"Erststimme_id_
 
 
 --
--- TOC entry 2351 (class 2604 OID 16469)
--- Dependencies: 175 174
+-- TOC entry 2417 (class 2604 OID 59447)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY erststimmen_aggregation ALTER COLUMN id SET DEFAULT nextval('erststimmen_aggregation_id_seq'::regclass);
+
+
+--
+-- TOC entry 2409 (class 2604 OID 16469)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2563,8 +2739,7 @@ ALTER TABLE ONLY land ALTER COLUMN id SET DEFAULT nextval('"Land_id_seq"'::regcl
 
 
 --
--- TOC entry 2352 (class 2604 OID 16470)
--- Dependencies: 177 176
+-- TOC entry 2410 (class 2604 OID 16470)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2572,8 +2747,7 @@ ALTER TABLE ONLY landeskandidat ALTER COLUMN id SET DEFAULT nextval('"Landeskand
 
 
 --
--- TOC entry 2353 (class 2604 OID 16471)
--- Dependencies: 179 178
+-- TOC entry 2411 (class 2604 OID 16471)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2581,8 +2755,7 @@ ALTER TABLE ONLY landesliste ALTER COLUMN id SET DEFAULT nextval('"Landesliste_i
 
 
 --
--- TOC entry 2354 (class 2604 OID 16472)
--- Dependencies: 181 180
+-- TOC entry 2412 (class 2604 OID 16472)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2590,8 +2763,7 @@ ALTER TABLE ONLY partei ALTER COLUMN id SET DEFAULT nextval('"Partei_id_seq"'::r
 
 
 --
--- TOC entry 2355 (class 2604 OID 16474)
--- Dependencies: 183 182
+-- TOC entry 2413 (class 2604 OID 16474)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -2599,19 +2771,25 @@ ALTER TABLE ONLY wahlkreis ALTER COLUMN id SET DEFAULT nextval('"Wahlkreis_id_se
 
 
 --
--- TOC entry 2356 (class 2604 OID 16475)
--- Dependencies: 185 184
+-- TOC entry 2414 (class 2604 OID 16475)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY zweitstimme ALTER COLUMN id SET DEFAULT nextval('"Zweitstimme_id_seq"'::regclass);
 
 
+--
+-- TOC entry 2416 (class 2604 OID 59457)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY zweitstimmen_aggregation ALTER COLUMN id SET DEFAULT nextval('zweitstimmen_aggregation_id_seq'::regclass);
+
+
 SET search_path = raw2005, pg_catalog;
 
 --
--- TOC entry 2357 (class 2604 OID 16703)
--- Dependencies: 194 193
+-- TOC entry 2415 (class 2604 OID 16703)
 -- Name: id; Type: DEFAULT; Schema: raw2005; Owner: -
 --
 
@@ -2621,8 +2799,7 @@ ALTER TABLE ONLY wahlbewerber ALTER COLUMN id SET DEFAULT nextval('wahlbewerber_
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 2359 (class 2606 OID 16477)
--- Dependencies: 169 169 2424
+-- TOC entry 2422 (class 2606 OID 16477)
 -- Name: Direktkandidat_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2631,8 +2808,7 @@ ALTER TABLE ONLY direktkandidat
 
 
 --
--- TOC entry 2361 (class 2606 OID 16479)
--- Dependencies: 171 171 2424
+-- TOC entry 2426 (class 2606 OID 16479)
 -- Name: Erststimme_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2641,8 +2817,7 @@ ALTER TABLE ONLY erststimme
 
 
 --
--- TOC entry 2365 (class 2606 OID 16481)
--- Dependencies: 173 173 2424
+-- TOC entry 2430 (class 2606 OID 16481)
 -- Name: Jahr_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2651,8 +2826,7 @@ ALTER TABLE ONLY jahr
 
 
 --
--- TOC entry 2367 (class 2606 OID 16483)
--- Dependencies: 174 174 2424
+-- TOC entry 2432 (class 2606 OID 16483)
 -- Name: Land_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2661,8 +2835,7 @@ ALTER TABLE ONLY land
 
 
 --
--- TOC entry 2369 (class 2606 OID 16485)
--- Dependencies: 176 176 2424
+-- TOC entry 2434 (class 2606 OID 16485)
 -- Name: Landeskandidat_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2671,8 +2844,7 @@ ALTER TABLE ONLY landeskandidat
 
 
 --
--- TOC entry 2371 (class 2606 OID 16487)
--- Dependencies: 178 178 2424
+-- TOC entry 2437 (class 2606 OID 16487)
 -- Name: Landesliste_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2681,8 +2853,7 @@ ALTER TABLE ONLY landesliste
 
 
 --
--- TOC entry 2373 (class 2606 OID 16631)
--- Dependencies: 180 180 2424
+-- TOC entry 2441 (class 2606 OID 16631)
 -- Name: Partei_name_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2691,8 +2862,7 @@ ALTER TABLE ONLY partei
 
 
 --
--- TOC entry 2375 (class 2606 OID 16489)
--- Dependencies: 180 180 2424
+-- TOC entry 2443 (class 2606 OID 16489)
 -- Name: Partei_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2701,8 +2871,7 @@ ALTER TABLE ONLY partei
 
 
 --
--- TOC entry 2377 (class 2606 OID 16493)
--- Dependencies: 182 182 2424
+-- TOC entry 2445 (class 2606 OID 16493)
 -- Name: Wahlkreis_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2711,8 +2880,7 @@ ALTER TABLE ONLY wahlkreis
 
 
 --
--- TOC entry 2379 (class 2606 OID 16495)
--- Dependencies: 184 184 2424
+-- TOC entry 2448 (class 2606 OID 16495)
 -- Name: Zweitstimme_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2721,18 +2889,43 @@ ALTER TABLE ONLY zweitstimme
 
 
 --
--- TOC entry 2409 (class 2606 OID 41667)
--- Dependencies: 223 223 223 2424
+-- TOC entry 2498 (class 2606 OID 59517)
+-- Name: berechtigten_uuid_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY berechtigten_uuid
+    ADD CONSTRAINT berechtigten_uuid_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2489 (class 2606 OID 59467)
+-- Name: erststimme_q7_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY erststimme_q7
+    ADD CONSTRAINT erststimme_q7_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2483 (class 2606 OID 59454)
+-- Name: erststimmen_aggregation_direktkandidat_id_wahlkreis_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY erststimmen_aggregation
+    ADD CONSTRAINT erststimmen_aggregation_direktkandidat_id_wahlkreis_id_key UNIQUE (direktkandidat_id, wahlkreis_id);
+
+
+--
+-- TOC entry 2485 (class 2606 OID 59452)
 -- Name: erststimmen_aggregation_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY erststimmen_aggregation
-    ADD CONSTRAINT erststimmen_aggregation_pkey PRIMARY KEY (direktkandidat_id, wahlkreis_id);
+    ADD CONSTRAINT erststimmen_aggregation_pkey PRIMARY KEY (id);
 
 
 --
--- TOC entry 2405 (class 2606 OID 25218)
--- Dependencies: 217 217 2424
+-- TOC entry 2474 (class 2606 OID 25218)
 -- Name: scherperfaktoren_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2741,20 +2934,36 @@ ALTER TABLE ONLY scherperfaktoren
 
 
 --
--- TOC entry 2407 (class 2606 OID 33481)
--- Dependencies: 222 222 222 2424
+-- TOC entry 2494 (class 2606 OID 59434)
+-- Name: zweitstimme_q7_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY zweitstimme_q7
+    ADD CONSTRAINT zweitstimme_q7_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2477 (class 2606 OID 59465)
+-- Name: zweitstimmen_aggregation_partei_id_wahlkreis_id_key; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY zweitstimmen_aggregation
+    ADD CONSTRAINT zweitstimmen_aggregation_partei_id_wahlkreis_id_key UNIQUE (partei_id, wahlkreis_id);
+
+
+--
+-- TOC entry 2479 (class 2606 OID 59463)
 -- Name: zweitstimmen_aggregation_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
 ALTER TABLE ONLY zweitstimmen_aggregation
-    ADD CONSTRAINT zweitstimmen_aggregation_pkey PRIMARY KEY (partei_id, wahlkreis_id);
+    ADD CONSTRAINT zweitstimmen_aggregation_pkey PRIMARY KEY (id);
 
 
 SET search_path = raw2005, pg_catalog;
 
 --
--- TOC entry 2391 (class 2606 OID 16713)
--- Dependencies: 195 195 2424
+-- TOC entry 2460 (class 2606 OID 16713)
 -- Name: Wahlkreise2005_pkey; Type: CONSTRAINT; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2763,8 +2972,7 @@ ALTER TABLE ONLY wahlkreise
 
 
 --
--- TOC entry 2393 (class 2606 OID 16870)
--- Dependencies: 196 196 2424
+-- TOC entry 2462 (class 2606 OID 16870)
 -- Name: bundeslandkuerzel_pkey; Type: CONSTRAINT; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2773,8 +2981,7 @@ ALTER TABLE ONLY bundeslandkuerzel
 
 
 --
--- TOC entry 2395 (class 2606 OID 16899)
--- Dependencies: 198 198 2424
+-- TOC entry 2464 (class 2606 OID 16899)
 -- Name: mapid_wahlkreise_pkey; Type: CONSTRAINT; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2783,8 +2990,7 @@ ALTER TABLE ONLY mapid_wahlkreise
 
 
 --
--- TOC entry 2389 (class 2606 OID 16708)
--- Dependencies: 193 193 2424
+-- TOC entry 2458 (class 2606 OID 16708)
 -- Name: wahlbewerber_pkey; Type: CONSTRAINT; Schema: raw2005; Owner: -; Tablespace: 
 --
 
@@ -2795,8 +3001,7 @@ ALTER TABLE ONLY wahlbewerber
 SET search_path = raw2009, pg_catalog;
 
 --
--- TOC entry 2381 (class 2606 OID 16497)
--- Dependencies: 186 186 2424
+-- TOC entry 2450 (class 2606 OID 16497)
 -- Name: landeslisten_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2805,8 +3010,7 @@ ALTER TABLE ONLY landeslisten
 
 
 --
--- TOC entry 2383 (class 2606 OID 16499)
--- Dependencies: 187 187 187 2424
+-- TOC entry 2452 (class 2606 OID 16499)
 -- Name: listenplaetze_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2815,8 +3019,7 @@ ALTER TABLE ONLY listenplaetze
 
 
 --
--- TOC entry 2403 (class 2606 OID 25173)
--- Dependencies: 214 214 2424
+-- TOC entry 2472 (class 2606 OID 25173)
 -- Name: mapid_direktkandidaten_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2825,8 +3028,7 @@ ALTER TABLE ONLY mapid_direktkandidaten
 
 
 --
--- TOC entry 2401 (class 2606 OID 25168)
--- Dependencies: 213 213 2424
+-- TOC entry 2470 (class 2606 OID 25168)
 -- Name: mapid_landeskandidaten_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2835,8 +3037,7 @@ ALTER TABLE ONLY mapid_landeskandidaten
 
 
 --
--- TOC entry 2399 (class 2606 OID 25163)
--- Dependencies: 212 212 2424
+-- TOC entry 2468 (class 2606 OID 25163)
 -- Name: mapid_landeslisten_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2845,8 +3046,7 @@ ALTER TABLE ONLY mapid_landeslisten
 
 
 --
--- TOC entry 2397 (class 2606 OID 25158)
--- Dependencies: 211 211 2424
+-- TOC entry 2466 (class 2606 OID 25158)
 -- Name: mapid_wahlkreise_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2855,8 +3055,7 @@ ALTER TABLE ONLY mapid_wahlkreise
 
 
 --
--- TOC entry 2385 (class 2606 OID 16501)
--- Dependencies: 188 188 2424
+-- TOC entry 2454 (class 2606 OID 16501)
 -- Name: wahlbewerber_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2865,8 +3064,7 @@ ALTER TABLE ONLY wahlbewerber
 
 
 --
--- TOC entry 2387 (class 2606 OID 16503)
--- Dependencies: 192 192 2424
+-- TOC entry 2456 (class 2606 OID 16503)
 -- Name: wahlkreise_pkey; Type: CONSTRAINT; Schema: raw2009; Owner: -; Tablespace: 
 --
 
@@ -2877,8 +3075,23 @@ ALTER TABLE ONLY wahlkreise
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 2362 (class 1259 OID 25179)
--- Dependencies: 171 2424
+-- TOC entry 2423 (class 1259 OID 59600)
+-- Name: direktkandidat_partei_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX direktkandidat_partei_id_idx ON direktkandidat USING btree (partei_id);
+
+
+--
+-- TOC entry 2424 (class 1259 OID 59599)
+-- Name: direktkandidat_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX direktkandidat_wahlkreis_id_idx ON direktkandidat USING btree (wahlkreis_id);
+
+
+--
+-- TOC entry 2427 (class 1259 OID 25179)
 -- Name: erststimme_direktkandidat_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2886,8 +3099,31 @@ CREATE INDEX erststimme_direktkandidat_id_idx ON erststimme USING btree (direktk
 
 
 --
--- TOC entry 2363 (class 1259 OID 25178)
--- Dependencies: 171 2424
+-- TOC entry 2487 (class 1259 OID 59557)
+-- Name: erststimme_q7_direktkandidat_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX erststimme_q7_direktkandidat_id_idx ON erststimme_q7 USING btree (direktkandidat_id);
+
+
+--
+-- TOC entry 2490 (class 1259 OID 59558)
+-- Name: erststimme_q7_wahlkreis_id_direktkandidat_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX erststimme_q7_wahlkreis_id_direktkandidat_id_idx ON erststimme_q7 USING btree (wahlkreis_id, direktkandidat_id);
+
+
+--
+-- TOC entry 2491 (class 1259 OID 59556)
+-- Name: erststimme_q7_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX erststimme_q7_wahlkreis_id_idx ON erststimme_q7 USING btree (wahlkreis_id);
+
+
+--
+-- TOC entry 2428 (class 1259 OID 25178)
 -- Name: erststimme_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2895,8 +3131,95 @@ CREATE INDEX erststimme_wahlkreis_id_idx ON erststimme USING btree (wahlkreis_id
 
 
 --
--- TOC entry 2410 (class 2606 OID 16504)
--- Dependencies: 169 180 2374 2424
+-- TOC entry 2481 (class 1259 OID 59597)
+-- Name: erststimmen_aggregation_direktkandidat_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX erststimmen_aggregation_direktkandidat_id_idx ON erststimmen_aggregation USING btree (direktkandidat_id);
+
+
+--
+-- TOC entry 2486 (class 1259 OID 59598)
+-- Name: erststimmen_aggregation_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX erststimmen_aggregation_wahlkreis_id_idx ON erststimmen_aggregation USING btree (wahlkreis_id);
+
+
+--
+-- TOC entry 2435 (class 1259 OID 59604)
+-- Name: landeskandidat_landesliste_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX landeskandidat_landesliste_id_idx ON landeskandidat USING btree (landesliste_id);
+
+
+--
+-- TOC entry 2438 (class 1259 OID 59602)
+-- Name: landesliste_land_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX landesliste_land_id_idx ON landesliste USING btree (land_id);
+
+
+--
+-- TOC entry 2439 (class 1259 OID 59603)
+-- Name: landesliste_partei_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX landesliste_partei_id_idx ON landesliste USING btree (partei_id);
+
+
+--
+-- TOC entry 2446 (class 1259 OID 59601)
+-- Name: wahlkreis_land_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX wahlkreis_land_id_idx ON wahlkreis USING btree (land_id);
+
+
+--
+-- TOC entry 2492 (class 1259 OID 59560)
+-- Name: zweitstimme_q7_landesliste_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX zweitstimme_q7_landesliste_id_idx ON zweitstimme_q7 USING btree (landesliste_id);
+
+
+--
+-- TOC entry 2495 (class 1259 OID 59559)
+-- Name: zweitstimme_q7_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX zweitstimme_q7_wahlkreis_id_idx ON zweitstimme_q7 USING btree (wahlkreis_id);
+
+
+--
+-- TOC entry 2496 (class 1259 OID 59561)
+-- Name: zweitstimme_q7_wahlkreis_id_landesliste_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX zweitstimme_q7_wahlkreis_id_landesliste_id_idx ON zweitstimme_q7 USING btree (wahlkreis_id, landesliste_id);
+
+
+--
+-- TOC entry 2475 (class 1259 OID 59595)
+-- Name: zweitstimmen_aggregation_partei_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX zweitstimmen_aggregation_partei_id_idx ON zweitstimmen_aggregation USING btree (partei_id);
+
+
+--
+-- TOC entry 2480 (class 1259 OID 59596)
+-- Name: zweitstimmen_aggregation_wahlkreis_id_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX zweitstimmen_aggregation_wahlkreis_id_idx ON zweitstimmen_aggregation USING btree (wahlkreis_id);
+
+
+--
+-- TOC entry 2499 (class 2606 OID 16504)
 -- Name: Direktkandidat_partei_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2905,8 +3228,7 @@ ALTER TABLE ONLY direktkandidat
 
 
 --
--- TOC entry 2411 (class 2606 OID 16509)
--- Dependencies: 169 182 2376 2424
+-- TOC entry 2500 (class 2606 OID 16509)
 -- Name: Direktkandidat_wahlkreis_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2915,8 +3237,7 @@ ALTER TABLE ONLY direktkandidat
 
 
 --
--- TOC entry 2412 (class 2606 OID 25005)
--- Dependencies: 2358 169 171 2424
+-- TOC entry 2501 (class 2606 OID 25005)
 -- Name: Erststimme_direktkandidat_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2925,8 +3246,7 @@ ALTER TABLE ONLY erststimme
 
 
 --
--- TOC entry 2413 (class 2606 OID 25010)
--- Dependencies: 182 2376 171 2424
+-- TOC entry 2502 (class 2606 OID 25010)
 -- Name: Erststimme_wahlkreis_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2935,8 +3255,7 @@ ALTER TABLE ONLY erststimme
 
 
 --
--- TOC entry 2414 (class 2606 OID 16524)
--- Dependencies: 173 2364 174 2424
+-- TOC entry 2503 (class 2606 OID 16524)
 -- Name: Land_jahr_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2945,8 +3264,7 @@ ALTER TABLE ONLY land
 
 
 --
--- TOC entry 2415 (class 2606 OID 16529)
--- Dependencies: 176 178 2370 2424
+-- TOC entry 2504 (class 2606 OID 16529)
 -- Name: Landeskandidat_landesliste_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2955,8 +3273,7 @@ ALTER TABLE ONLY landeskandidat
 
 
 --
--- TOC entry 2416 (class 2606 OID 16534)
--- Dependencies: 178 2366 174 2424
+-- TOC entry 2505 (class 2606 OID 16534)
 -- Name: Landesliste_land_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2965,8 +3282,7 @@ ALTER TABLE ONLY landesliste
 
 
 --
--- TOC entry 2417 (class 2606 OID 16539)
--- Dependencies: 180 2374 178 2424
+-- TOC entry 2506 (class 2606 OID 16539)
 -- Name: Landesliste_partei_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2975,8 +3291,7 @@ ALTER TABLE ONLY landesliste
 
 
 --
--- TOC entry 2418 (class 2606 OID 59083)
--- Dependencies: 182 174 2366 2424
+-- TOC entry 2507 (class 2606 OID 59083)
 -- Name: Wahlkreis_land_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2985,8 +3300,7 @@ ALTER TABLE ONLY wahlkreis
 
 
 --
--- TOC entry 2419 (class 2606 OID 25015)
--- Dependencies: 178 2370 184 2424
+-- TOC entry 2508 (class 2606 OID 25015)
 -- Name: Zweitstimme_landesliste_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2995,8 +3309,7 @@ ALTER TABLE ONLY zweitstimme
 
 
 --
--- TOC entry 2420 (class 2606 OID 25020)
--- Dependencies: 184 2376 182 2424
+-- TOC entry 2509 (class 2606 OID 25020)
 -- Name: Zweitstimme_wahlkreis_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -3004,11 +3317,28 @@ ALTER TABLE ONLY zweitstimme
     ADD CONSTRAINT "Zweitstimme_wahlkreis_id_fkey" FOREIGN KEY (wahlkreis_id) REFERENCES wahlkreis(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
+--
+-- TOC entry 2512 (class 2606 OID 59565)
+-- Name: zweitstimme_q7_landesliste_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY zweitstimme_q7
+    ADD CONSTRAINT zweitstimme_q7_landesliste_id_fkey FOREIGN KEY (landesliste_id) REFERENCES landesliste(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
+--
+-- TOC entry 2513 (class 2606 OID 59570)
+-- Name: zweitstimme_q7_wahlkreis_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY zweitstimme_q7
+    ADD CONSTRAINT zweitstimme_q7_wahlkreis_id_fkey FOREIGN KEY (wahlkreis_id) REFERENCES wahlkreis(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+
+
 SET search_path = raw2009, pg_catalog;
 
 --
--- TOC entry 2421 (class 2606 OID 16564)
--- Dependencies: 187 188 2384 2424
+-- TOC entry 2510 (class 2606 OID 16564)
 -- Name: listenplaetze_Kandidat_fkey; Type: FK CONSTRAINT; Schema: raw2009; Owner: -
 --
 
@@ -3017,8 +3347,7 @@ ALTER TABLE ONLY listenplaetze
 
 
 --
--- TOC entry 2422 (class 2606 OID 16569)
--- Dependencies: 186 187 2380 2424
+-- TOC entry 2511 (class 2606 OID 16569)
 -- Name: listenplaetze_Landesliste_fkey; Type: FK CONSTRAINT; Schema: raw2009; Owner: -
 --
 
@@ -3026,7 +3355,7 @@ ALTER TABLE ONLY listenplaetze
     ADD CONSTRAINT "listenplaetze_Landesliste_fkey" FOREIGN KEY ("Landesliste") REFERENCES landeslisten("Listennummer");
 
 
--- Completed on 2013-01-09 12:21:06 CET
+-- Completed on 2013-01-28 13:53:51
 
 --
 -- PostgreSQL database dump complete
